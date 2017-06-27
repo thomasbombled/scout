@@ -1,0 +1,324 @@
+@keyframes alertMe {
+  from {
+    border-width: 3px;
+    border-color: gold;
+  }
+  to {
+    border-width: 0;
+    border-color: rgba(255, 215, 0, 0.1);
+  }
+}
+
+/* line 4, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
+nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* line 109, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+nav ul:before, nav ul:after {
+  content: "";
+  display: table;
+}
+
+/* line 114, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+nav ul:after {
+  clear: both;
+}
+
+/* line 11, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
+nav li {
+  display: block;
+  height: 60px;
+  float: left;
+  padding: 0 15px;
+}
+
+/* line 109, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+nav li:before, nav li:after {
+  content: "";
+  display: table;
+}
+
+/* line 114, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+nav li:after {
+  clear: both;
+}
+
+/* line 19, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
+nav a {
+  display: block;
+  padding: 6px 12px;
+  text-decoration: none;
+  font-size: 1vw;
+  height: auto;
+  line-height: 1;
+  color: #e2e2e2;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+/* line 30, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
+.site-header {
+  padding: 2rem;
+  font-size: 1.8rem;
+  z-index: 4;
+}
+
+@media only screen and (min-width: 1024px) {
+  /* line 30, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
+  .site-header {
+    padding-top: 4rem;
+    font-size: 2.4rem;
+  }
+}
+
+@media only screen and (min-width: 1248px) {
+  /* line 30, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
+  .site-header {
+    padding-top: 6rem;
+    font-size: 4rem;
+  }
+}
+
+/* line 150, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+.alert:before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  height: 8px;
+  width: 8px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  border-radius: 10px;
+  background-color: gold;
+}
+
+/* line 158, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+.alert:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 20px;
+  width: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  border-radius: 20px;
+  background-color: transparent;
+  border: solid gold;
+  border-width: 2px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-animation: alertMe 1000ms infinite ease 0ms;
+  -moz-animation: alertMe 1000ms infinite ease 0ms;
+  -o-animation: alertMe 1000ms infinite ease 0ms;
+  animation: alertMe 1000ms infinite ease 0ms;
+}
+
+/* line 48, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
+.logo {
+  text-align: center;
+  z-index: 3;
+  max-width: 85px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* line 54, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
+.logo:after {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid #f8001d;
+  margin-right: -6px;
+}
+
+/* line 109, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+.article:before, .article:after {
+  content: "";
+  display: table;
+}
+
+/* line 114, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+.article:after {
+  clear: both;
+}
+
+/* line 2, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_alert.scss */
+.alert {
+  position: relative;
+  display: block;
+  width: 120px;
+  text-align: center;
+  background: #333;
+  color: #fff;
+  padding: 15px;
+}
+
+/* line 150, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+.alert:before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  height: 8px;
+  width: 8px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  border-radius: 10px;
+  background-color: gold;
+}
+
+/* line 158, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+.alert:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 20px;
+  width: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  border-radius: 20px;
+  background-color: transparent;
+  border: solid gold;
+  border-width: 2px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-animation: alertMe 1000ms infinite ease 0ms;
+  -moz-animation: alertMe 1000ms infinite ease 0ms;
+  -o-animation: alertMe 1000ms infinite ease 0ms;
+  animation: alertMe 1000ms infinite ease 0ms;
+}
+
+/* line 16, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+body {
+  font: 100% Arial, Helvetica, Sans-serif;
+}
+
+/* line 20, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+.container {
+  width: 960px;
+  margin: 0 auto;
+}
+
+/* line 25, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+article[role="main"] {
+  float: left;
+  width: 62.5%;
+}
+
+/* line 32, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+input.placeholder,
+textarea.placeholder {
+  color: #cb5d1e;
+}
+
+/* line 33, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+  color: #cb5d1e;
+}
+
+/* line 34, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: #cb5d1e;
+}
+
+/* line 35, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: #cb5d1e;
+}
+
+/* line 36, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #cb5d1e;
+}
+
+/* line 37, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+aside[role="complementary"] {
+  float: right;
+  width: 31.25%;
+}
+
+/* line 41, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+img {
+  padding-top: 56.25%;
+}
+
+/* line 47, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+.site-header {
+  padding: 2rem;
+  font-size: 1.8rem;
+  z-index: 4;
+}
+
+@media only screen and (min-width: 1024px) {
+  /* line 47, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+  .site-header {
+    padding-top: 0;
+    font-size: 2.4rem;
+    background: #cb5d1e;
+  }
+}
+
+@media only screen and (min-width: 1248px) {
+  /* line 47, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+  .site-header {
+    padding-top: 0rem;
+    font-size: 4rem;
+  }
+}
+
+/* line 63, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+.logo {
+  font-family: Times, serif;
+  text-align: center;
+  z-index: 3;
+  max-width: 85px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* line 71, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+.logo:after {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid #f8001d;
+  margin-right: -6px;
+}
+
+/* line 109, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+.article:before, .article:after {
+  content: "";
+  display: table;
+}
+
+/* line 114, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+.article:after {
+  clear: both;
+}
+
+/*# sourceMappingURL=../_css/style.map */

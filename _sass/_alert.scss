@@ -1,0 +1,11 @@
+
+.alert {
+    position: relative;
+    display: block;
+    width: 120px;
+    text-align: center;
+    background: #333;
+    color: #fff;
+    padding: 15px;
+    @include alerted();
+}

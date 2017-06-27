@@ -1,0 +1,170 @@
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+
+ 
+  @mixin responsive-ratio($x,$y, $pseudo: false) {
+    $padding: unquote( ( $y / $x ) * 100 + '%' );
+    @if $pseudo {
+        &:before {
+            @include pseudo($pos: relative);
+            width: 100%;
+            padding-top: $padding;
+        }
+    } @else {
+        padding-top: $padding;
+    }
+}
+
+@mixin font-source-sans($size: false, $colour: false, $weight: false,  $lh: false) {
+    font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+    @if $size { font-size: $size; }
+    @if $colour { color: $colour; }
+    @if $weight { font-weight: $weight; }
+    @if $lh { line-height: $lh; }
+}
+
+@mixin input-placeholder {
+    &.placeholder { @content; }
+    &:-moz-placeholder { @content; }
+    &::-moz-placeholder { @content; }
+    &:-ms-input-placeholder { @content; }
+    &::-webkit-input-placeholder { @content; }
+}
+@mixin pseudo ($pos: $position){
+  position: $pos;
+}
+
+
+@mixin ghostVerticalAlign(){
+     position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+ 
+
+}
+@mixin css-triangle($color, $direction, $size: 6px, $position: absolute, $round: false){
+    @include pseudo($pos: $position);
+    width: 0;
+    height: 0;
+    @if $round {
+        border-radius: 3px;
+    }
+    @if $direction == down {
+        border-left: $size solid transparent;
+        border-right: $size solid transparent;
+        border-top: $size solid $color;
+        margin-top: 0 - round( $size / 2.5 );
+    } @else if $direction == up {
+        border-left: $size solid transparent;
+        border-right: $size solid transparent;
+        border-bottom: $size solid $color;
+        margin-bottom: 0 - round( $size / 2.5 );
+    } @else if $direction == right {
+        border-top: $size solid transparent;
+        border-bottom: $size solid transparent;
+        border-left: $size solid $color;
+        margin-right: -$size;
+    } @else if  $direction == left {
+        border-top: $size solid transparent;
+        border-bottom: $size solid transparent;
+        border-right: $size solid $color;
+        margin-left: -$size;
+    }
+}
+
+
+
+$breakpoints: (
+    "phone":        400px,
+    "phone-wide":   480px,
+    "phablet":      560px,
+    "tablet-small": 640px,
+    "tablet":       768px,
+    "tablet-wide":  1024px,
+    "desktop":      1248px,
+    "desktop-wide": 1440px
+);
+
+
+@mixin mq($width, $type: min) {
+    @if map_has_key($breakpoints, $width) {
+        $width: map_get($breakpoints, $width);
+        @if $type == max {
+            $width: $width - 1px;
+        }
+        @media only screen and (#{$type}-width: $width) {
+            @content;
+        }
+    }
+}
+
+@mixin clearfix() {
+    &:before,
+    &:after {
+        content: "";
+        display: table;
+    }
+    &:after {
+        clear: both;
+    }
+}
+
+
+
+@mixin animation($name, $duration: 1000ms, $iterations: infinite, $timing-function: ease, $delay: 0ms) {
+  // There is a FF bug that requires all time values to have units, even 0 !!!!!!
+  -webkit-animation: $name $duration $iterations $timing-function $delay;
+  -moz-animation: $name $duration $iterations $timing-function $delay;
+  -o-animation: $name $duration $iterations $timing-function $delay;
+  animation: $name $duration $iterations $timing-function $delay;
+} 
+
+
+@mixin box-sizing($box-model) {
+  -webkit-box-sizing: $box-model; // Safari <= 5
+     -moz-box-sizing: $box-model; // Firefox <= 19
+          box-sizing: $box-model;
+} 
+
+@mixin hardware($backface: true, $perspective: 1000) {
+    @if $backface {
+        backface-visibility: hidden;
+    }
+    perspective: $perspective;
+}
+@mixin truncate($truncation-boundary) {
+    max-width: $truncation-boundary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin alerted() {
+  &:before {
+    content: '';
+    position: absolute;
+    top: 6px; right: 6px;
+    height: 8px; width: 8px;
+    @include border-radius(10px);
+    background-color: gold;
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    height: 20px; width: 20px;
+    @include border-radius(20px);
+    background-color: transparent;
+    border: solid gold;
+    border-width: 2px; // animates
+    @include box-sizing(border-box);
+    @include animation($name: alertMe);
+  }
+}
