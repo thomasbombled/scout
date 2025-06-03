@@ -1,423 +1,478 @@
-@import 'mixin';
-@import 'function';
-@import 'nav';
-@import 'alert';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 
-// Light Color Scheme
-$light-bg: #ffffff;
-$light-gray-bg: #f8f9fa; // Slightly off-white for section distinction if needed
-$text-color: #333333;
-$primary-color: #007bff; // A clean blue for accents/links
-$border-color: #eeeeee; // Light border color for separation
+@import 'mixin'; // Assuming this contains mq and other necessary mixins
+@import 'function'; // Assuming this contains z()
+@import 'nav';    // This will need review for dark theme
+@import 'alert';  // This will also need review
 
-// Existing variable override (if $grey was used for anything other than dark text/backgrounds)
-// For a light theme, $grey might represent a darker accent or text.
-// Let's redefine it for its previous use or choose a new variable.
-// Given the original $grey: #cb5d1e; (orange/brown), it was likely an accent.
-// We'll use $primary-color for new accents and ensure $grey isn't causing issues.
-// For now, we'll keep $grey as is, in case it's used in imported partials for specific elements
-// not directly part of the main content background/text.
-$grey: #cb5d1e; // Original variable, assess if it needs to change based on its usage in partials
+// New Futurist Dark Color Palette
+$primary-color: #16c9c3;       // Teal/Cyan - for accents, links, highlights
+$text-color-light: #e0e0e0;    // Light grey/off-white for main text on dark backgrounds
+$text-color-dark: #333333;     // Dark grey for text on any light surfaces (e.g., buttons)
+$background-dark: #1a1a1a;     // Very dark grey/charcoal for main background
+$accent-color-dark: #2c2c2c;   // Slightly lighter dark grey for cards, header, subtle borders
+$border-color-futuristic: $primary-color; // Use primary for prominent borders
 
-$font: Arial, Helvetica, Sans-serif;
-$fonts: Times, serif; // Typically for more decorative text like logo
+// Font
+$font: 'Roboto', sans-serif;
+$fonts: 'Roboto', sans-serif; // Using Roboto for logo as well for consistency, or keep Times if preferred for logo only
+
+// Old variables that might be in imported partials - assess and override or remove
+// $light-bg: #ffffff; // No longer primary bg
+// $light-gray-bg: #f8f9fa;
+// $text-color: #333333; // Now $text-color-dark or $text-color-light
+// $border-color: #eeeeee; // Now $accent-color-dark or $border-color-futuristic
+// $grey: #cb5d1e; // Old accent, remove or replace if used in @imports
 
 body {
   font: 100% $font;
-  color: $text-color;
-  background-color: $light-bg;
+  font-weight: 300; // Lighter default font weight
+  color: $text-color-light;
+  background-color: $background-dark;
   margin: 0;
   padding: 0;
+  line-height: 1.6;
 }
 
 .container {
-  width: 960px;
+  width: 960px; // Consider making this more fluid, e.g., 90% with max-width
   margin: 0 auto;
-  padding: 0 1rem; // Add some padding to the container
+  padding: 0 1rem;
 }
 
 article[role="main"] {
-  float: left;
-  width: 600px / 960px * 100%; // Approx 62.5%
+  float: left; // These floats might be revisited for a more modern layout (flex/grid) later
+  width: 62.5%; // 600px / 960px * 100%
 }
 
 aside[role="complementary"] {
   float: right;
-  width: 300px / 960px * 100%; // Approx 31.25%
+  width: 31.25%; // 300px / 960px * 100%
+  background-color: lighten($background-dark, 5%); // Subtle differentiation
+  padding: 1rem;
+  border-radius: 4px;
 }
 
-// Clearfix for floated elements like article and aside
-.container::after {
+.container::after { // Clearfix for floats
   content: "";
   display: table;
   clear: both;
 }
 
+a {
+  color: $primary-color;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+  &:hover, &:focus {
+    color: lighten($primary-color, 10%);
+    text-decoration: underline;
+  }
+}
+
 input,
 textarea {
-  @include input-placeholder {
-    color: $text-color; // Use main text color for placeholder, or a lighter shade like #777
-  }
-  border: 1px solid $border-color;
-  padding: 0.5rem;
+  font-family: $font;
+  background-color: $accent-color-dark;
+  color: $text-color-light;
+  border: 1px solid $primary-color; // Prominent border for inputs
+  padding: 0.75rem;
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  @include input-placeholder { // Assumes mixin is defined in _mixin.scss
+    color: lighten($text-color-light, 20%); // Lighter placeholder
+  }
+
+  &:focus {
+    outline: none;
+    border-color: lighten($primary-color, 10%);
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.4); // Slightly more pronounced shadow
+  }
+}
+textarea {
+  min-height: 120px;
+  resize: vertical;
 }
 
 img {
-  // @include responsive-ratio(16, 9); // Removed global aspect ratio forcing
   max-width: 100%;
   height: auto;
-  display: block; // Remove extra space below image
+  display: block;
+  border-radius: 4px; // Subtle rounding for all images
 }
 
 .site-header {
-  padding: 1rem 0; // Adjusted padding
-  // background-color: $light-gray-bg; // Example light background for header
-  border-bottom: 1px solid $border-color;
-  margin-bottom: 2rem;
-  z-index: z('site-header'); // Assuming z-function is from _function.scss
+  padding: 1rem 0;
+  background-color: $accent-color-dark; // Dark header
+  border-bottom: 1px solid $primary-color; // Accent border
+  margin-bottom: 2.5rem; // Increased spacing
+  z-index: z('site-header');
 
-  @include mq('tablet-wide') {
-    padding-top: 1rem; // Keep consistent padding
-    // background: $light-gray-bg; // Remove old $grey background
-  }
-  @include mq('desktop') {
-    padding-top: 1rem;
+  // Assuming nav styles are in _nav.scss and will be updated there or overridden here if needed
+  // For example, nav links:
+  nav ul li a { // This selector is from _nav.scss
+    color: $text-color-light;
+    &:hover {
+      color: $primary-color;
+    }
   }
 }
 
 .logo {
-  font-family: $fonts;
+  font-family: $fonts; // Ensure $fonts is 'Roboto' or your chosen futuristic font
   text-align: center;
   z-index: z('logo');
-  @include truncate(85px); // Assuming this is a text truncation mixin
-  // convert-angle("90deg",rad); // This seems like an odd function call here, review if necessary
-  color: $primary-color; // Style logo with primary color
+  @include truncate(85px); // Review if still needed
+  color: $primary-color;
+  font-weight: 700; // Bold logo
+  font-size: 2rem; // Ensure logo font size is appropriate
 }
 
-.logo:after {
-  // @include css-triangle(#f8001d, right,  6px ); // Original red triangle, consider changing color or removing
-  @include css-triangle($primary-color, right, 6px); // Use primary color for triangle
+.logo:after { // Triangle after logo
+  @include css-triangle($primary-color, right, 6px); // Keep primary color for accent
 }
 
-.article { // This class seems to be unused in index.html, but keeping for completeness
-  @include clearfix();
-}
-
-// Styling for new sections
-#interactive-model,
+// Sections
+#interactive-model, // This is a normal section again, above the horizontal scroll
 #about,
-#portfolio,
+// #portfolio, // Portfolio section itself will be styled differently for horizontal scroll
 #experience,
 #contact {
-  position: relative; // For positioning parallax background or other absolute elements if needed
-  padding: 2rem 0;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid $border-color;
+  position: relative;
+  padding: 2.5rem 0;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid $accent-color-dark;
 
   h2 {
-    font-size: 1.8rem;
+    font-size: 2rem; // Slightly larger
     color: $primary-color;
     margin-top: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
   }
 
-  // Remove border from the last section
-  &:last-child {
+  &:last-child { // Applied to #contact now if #portfolio is taken out of this group
     border-bottom: none;
     margin-bottom: 0;
   }
 }
 
-#portfolio {
-  position: relative; // Needed for z-index stacking of parallax background
-  overflow: hidden; // Prevent parallax bg from spilling if it's larger
-  z-index: 1; // Ensure content is above parallax background
+
+// Horizontal Scrolling Portfolio Section
+#portfolio-horizontal-wrapper {
+  height: 200vh; // Example: 2 slides, each gets 100vh of scroll "duration"
+  position: relative;
+  // border-top: 2px solid $primary-color; // Optional: visual cue for start of special section
+  // border-bottom: 2px solid $primary-color; // Optional: visual cue for end
+  margin-bottom: 2.5rem; // Standard section margin
 }
 
-#parallax-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://via.placeholder.com/1500x800.png?text=Parallax+Background'); // Placeholder image
-  background-size: cover;
-  background-position: center center;
-  // background-attachment: fixed; // This creates a simple parallax, JS will provide more control
-  z-index: -1; // Place it behind the content of the #portfolio section
-  // Opacity can be adjusted if needed, e.g. opacity: 0.7;
-}
+#portfolio { // This is the flex container that moves horizontally
+  display: flex;
+  flex-direction: row;
+  // Width will be set by JS (e.g., 200% for 2 slides)
+  height: 100vh; // Each "page" of horizontal scroll is 1 viewport height
+  position: relative; // Will be pinned by GSAP, but default/relative is fine
+  // overflow: hidden; // Not strictly needed on container, but on slides if their content overflows
 
-// Styling for Interactive Model Section
-#interactive-model {
-  h2 { // Center title for this section specifically if desired
-    text-align: center;
+  // Resetting some properties from the general section styles if they conflict
+  padding: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+
+  h2 { // Portfolio title styling, make sure it's visible within the horizontal scroll context
+    position: absolute; // Example: Pin it to the top-left of the first slide
+    top: 2.5rem; // Match section padding
+    left: 2rem; // Example padding
+    z-index: 10; // Above slide content
+    // Or style it as part of the first slide's content flow
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    color: $primary-color;
   }
-  // Ensure it has some space even if canvas fails to load
-  min-height: 100px;
+
+  // Direct children are the "slides"
+  > .portfolio-items,
+  > .funny-gallery {
+    width: 100vw; // Each slide is full viewport width
+    height: 100vh; // Each slide is full viewport height
+    flex-shrink: 0;
+    overflow-y: auto; // Allow vertical scroll within a slide if content exceeds viewport height
+    padding: 4rem 2rem 2rem 2rem; // Generous padding; adjust top padding if H2 is absolutely positioned within slide
+    // background-color: $background-dark; // Ensure slides have background if wrapper is transparent for pinning
+
+    // Add temporary visual cues for slides
+    // border-right: 2px dashed yellow;
+
+    // Ensure direct children (like .portfolio-item grid or .funny-gallery h3) are positioned correctly
+    // For example, the .portfolio-items grid might need its own width constraint if not already 100% of this slide.
+    // And .funny-gallery h3 might need to be re-centered or styled within its 100vw slide.
+  }
+
+  // Specific adjustments for .funny-gallery if it's a slide
+  > .funny-gallery {
+    // The h3 inside .funny-gallery will use its existing styles,
+    // ensure it's well-positioned within its 100vw slide context.
+    // Example: If its text-align:center is desired, it will center within the 100vw.
+    // Reset margin/border that might have been for vertical stacking
+    margin-top: 0;
+    border-top: none;
+  }
+}
+
+
+#interactive-model {
+  // This section might just be a content overlay if canvas is full screen bg
+  // Or it could be removed if its H2 is not needed.
+  // For now, ensure its content is visible above the fixed canvas.
+  position: relative; // To allow z-index stacking for its content if any
+  z-index: 2; // Higher than the model-canvas
+
+  h2 {
+    text-align: center;
+    // If this title is to be visible over the full-screen canvas,
+    // it might need specific positioning or background for readability.
+    // For now, it will just be part of the normal document flow.
+  }
+  // min-height: 100px; // No longer defines canvas container height
 }
 
 #model-canvas {
-  display: block; // Remove extra space below canvas
-  width: 100%;
-  max-width: 600px; // Max width for the canvas
-  height: 400px;   // Fixed height for the canvas
-  margin: 1rem auto; // Center canvas and add some margin
-  background-color: $light-gray-bg; // Light background for the canvas area
-  border-radius: 4px; // Optional: if you want rounded corners
-  // border: 1px solid $border-color; // Optional: if you want a border
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; // Behind all other content
+  // background-color: $background-dark; // Renderer will set clearColor, so this might not be needed
+                                       // or set to ensure no flicker before render.
 }
 
-// Styling for Portfolio Items
+// Portfolio Items
 .portfolio-items {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem; // Space between items
+  gap: 1.5rem; // Increased gap
   margin-top: 1rem;
 }
-
 .portfolio-item {
-  border: 1px solid $border-color;
-  border-radius: 4px;
-  padding: 1rem;
-  background-color: $light-bg;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  flex-basis: calc(50% - 0.5rem); // Two items per row on larger screens, considering gap
+  border: 1px solid $accent-color-dark;
+  border-radius: 6px; // Slightly more rounding
+  padding: 1.5rem; // Increased padding
+  background-color: $accent-color-dark;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2); // More pronounced shadow for dark theme
+  flex-basis: calc(50% - 0.75rem); // Adjusted for new gap
+  transition: transform 0.3s ease, border-color 0.3s ease;
 
-  @include mq('phablet') {
-    flex-basis: 100%; // Full width on smaller screens
+  &:hover {
+    transform: translateY(-5px);
+    border-color: $primary-color;
   }
 
-  img {
-    margin-bottom: 0.75rem;
-    border-radius: 4px;
-  }
+  @include mq('phablet') { flex-basis: 100%; }
+
+  img { margin-bottom: 1rem; } // Increased space
   h3 {
-    font-size: 1.2rem;
-    color: $primary-color;
+    font-size: 1.4rem;
+    color: $text-color-light; // Titles within cards are light
     margin-top: 0;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
   }
   p {
-    font-size: 0.9rem;
-    line-height: 1.4;
+    font-size: 0.95rem; // Slightly larger paragraph
+    line-height: 1.5;
     margin-bottom: 0;
+    color: lighten($text-color-light, 10%);
   }
 }
 
-// Styling for Experience Entries
+// Experience Entries
 .job-entry {
-  margin-bottom: 1.5rem;
-  padding-left: 1rem;
-  border-left: 3px solid $primary-color;
+  margin-bottom: 2rem;
+  padding-left: 1.5rem;
+  border-left: 4px solid $primary-color; // Thicker accent border
 
-  h3 {
-    font-size: 1.3rem;
-    color: $text-color; // Or $primary-color if preferred
+  h3 { // Job titles
+    font-size: 1.5rem;
+    color: $text-color-light;
     margin-top: 0;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.35rem;
+    font-weight: 400;
   }
   .company-dates {
     font-size: 0.9rem;
     font-style: italic;
-    color: lighten($text-color, 20%);
-    margin-bottom: 0.5rem;
+    color: lighten($text-color-light, 30%);
+    margin-bottom: 0.75rem;
   }
   ul {
     padding-left: 1.2rem;
     margin-bottom: 0;
     li {
-      font-size: 0.9rem;
-      line-height: 1.5;
-      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 0.35rem;
     }
   }
 }
 
-// Styling for Contact Form
+// Contact Form
 .contact-form-container {
-  max-width: 600px; // Limit form width for better readability
-  margin: 0 auto; // Center it if article[role="main"] is wider
+  max-width: 600px;
+  margin: 0 auto;
   padding: 1rem 0;
-
-  .form-group {
-    margin-bottom: 1rem;
-  }
-
+  .form-group { margin-bottom: 1.5rem; } // Increased spacing
   label {
     display: block;
     margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: $text-color;
-  }
-
-  input[type="text"],
-  input[type="email"],
-  textarea { // General textarea styles already updated above
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid $border-color;
-    border-radius: 4px;
-    box-sizing: border-box; // Ensure padding doesn't expand element width
-    font-family: $font;
-    font-size: 1rem;
-
-    &:focus {
-      outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.25);
-    }
-  }
-  
-  textarea {
-    min-height: 120px;
-    resize: vertical;
+    font-weight: 700; // Bold labels
+    color: $text-color-light;
   }
 }
 
-// General Button Styling (can be extracted to a button component later)
-.button, button[type="submit"] { // Target generic .button class and the specific submit
+// General Button Styling
+.button, button[type="submit"] {
   display: inline-block;
   background-color: $primary-color;
-  color: $light-bg;
-  padding: 0.75rem 1.5rem;
+  color: $background-dark; // Dark text on primary button for contrast
+  padding: 0.85rem 1.75rem; // Slightly larger
   border: none;
   border-radius: 4px;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 700; // Bold button text
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+  text-transform: uppercase; // Futuristic feel
 
   &:hover, &:focus {
-    background-color: darken($primary-color, 10%);
+    background-color: lighten($primary-color, 10%);
+    color: $background-dark; // Ensure text color remains dark on hover/focus
     outline: none;
+    transform: scale(1.02); // Slight scale on hover
+  }
+  &:active {
+    transform: scale(0.98);
   }
 }
 
 .contact-details {
-  margin-top: 2rem;
-  text-align: center; // Center the "Or reach out via" text
-  p {
-    margin-bottom: 0.5rem;
-  }
+  margin-top: 2.5rem;
+  text-align: center;
+  p { margin-bottom: 0.75rem; }
   a {
-    color: $primary-color;
-    text-decoration: none;
-    &:hover {
-      text-decoration: underline;
-    }
+    // Uses global 'a' styles (color: $primary-color)
   }
 }
 
+// SVG Icons in Headings
+section[id] > h2 > svg,
+.funny-gallery > h3 > svg,
+.portfolio-item > h3 > svg, // If icons were added to portfolio item H3s
+.job-entry > h3 > svg {     // If icons were added to job entry H3s
+  width: 1em;
+  height: 1em;
+  min-width: 16px;
+  min-height: 16px;
+  fill: currentColor; // Inherits color from heading (mostly $primary-color or $text-color-light)
+  margin-right: 0.4em; // Slightly more space
+  vertical-align: -0.15em; // Fine-tune alignment
+}
 
-// Basic responsive adjustments
-@include mq('phablet') { // Assuming 'phablet' is a breakpoint from _mixin.scss
-  .container {
-    width: 100%;
-    padding: 0 1rem;
+// Funny Gallery
+.funny-gallery {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px dashed $accent-color-dark; // Subtle dashed line
+
+  h3 { // "My Funny Moments"
+    text-align: center;
+    font-size: 1.8rem;
+    color: $primary-color; // Use primary for this subtitle too
+    margin-bottom: 2rem;
+    font-weight: 400;
   }
+}
+.funny-gallery-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem; // More gap
 
+  @include mq('tablet') {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+.funny-item {
+  background-color: $accent-color-dark;
+  padding: 1rem; // More padding
+  border: 2px dashed $primary-color; // Keep playful border
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.25); // Adjusted shadow for dark
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  img { display: block; width: 100%; height: auto; border-radius: 4px; }
+
+  &:nth-child(4n+1) { transform: rotate(-2.5deg); } // Slightly more rotation
+  &:nth-child(4n+2) { transform: rotate(2deg); }
+  &:nth-child(4n+3) { transform: rotate(3deg); }
+  &:nth-child(4n+4) { transform: rotate(-1.5deg); }
+
+  &:hover {
+    transform: scale(1.1) rotate(0deg) !important; // More pronounced hover
+    box-shadow: 0 6px 12px rgba($primary-color, 0.3); // Shadow with primary color hint
+    z-index: 10;
+    position: relative;
+  }
+}
+
+// Responsive Adjustments (from original, review for dark theme)
+@include mq('phablet') {
+  .container { width: 100%; padding: 0 1rem; }
   article[role="main"],
   aside[role="complementary"] {
     width: 100%;
     float: none;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem; // Consistent spacing
+    padding: 1rem; // Ensure padding on aside for phablet
+  }
+  aside[role="complementary"] {
+    background-color: transparent; // May not need bg if stacked
   }
 
-  .site-header {
-    text-align: center; // Center header content on small screens
-    nav ul {
-      padding-left: 0; // Remove default padding
-      li {
-        display: block; // Stack nav items
-        margin-bottom: 0.5rem;
-      }
-    }
-  }
+  .site-header { text-align: center; } // nav already stacks from _nav.scss
 
-  #about,
-  #portfolio,
-  #experience,
-  #contact {
-    padding: 1.5rem 0;
-  }
+  #interactive-model, #about, #portfolio, #experience, #contact { padding: 2rem 0; } // Slightly less padding on mobile
 
-  // Funny Gallery specific responsive adjustments
-  .funny-gallery-items {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); // Adjust minmax for smaller screens
-  }
-  .funny-item {
-    // No specific phablet changes needed if grid handles it,
-    // but you could adjust rotations or margins if desired
-  }
+  .portfolio-item { flex-basis: 100%; }
+  .funny-gallery-items { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+  .funny-item { padding: 0.75rem; }
 }
 
-// Styling for Funny Gallery
-.funny-gallery {
-  margin-top: 3rem; // Space above the funny gallery subsection
-  padding-top: 1.5rem;
-  border-top: 1px dashed $border-color; // A playful separator
+// Ensure imported _nav.scss and _alert.scss don't have conflicting light-theme styles.
+// If they do, those files would need to be updated or their styles overridden here.
+// For _nav.scss, the example override 'nav ul li a' is above.
+// For _alert.scss, if it's still used and has light theme values, it would need:
+// .alert { background: $accent-color-dark; color: $text-color-light; border-color: $primary-color; ...}
+// Assuming .alert is not currently active content, so focusing on main theme.
 
-  h3 {
-    text-align: center;
-    font-size: 1.6rem; // Slightly smaller than main section H2s
-    color: darken($primary-color, 10%); // A variation of primary for fun
-    margin-bottom: 1.5rem;
-    // text-transform: uppercase; // Optional: for a more "announcement" feel
-  }
+// Final check on text colors for readability on dark backgrounds
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400; // Consistent heading weight, can vary per level if desired
+}
+p, li, label { // General text elements
+  font-weight: 300;
 }
 
-// Styling for SVGs in headings
-section[id] > h2 > svg,
-.funny-gallery > h3 > svg {
-  width: 1em; // Relative to parent font size
-  height: 1em; // Relative to parent font size
-  min-width: 16px; // Prevent icons from becoming too small
-  min-height: 16px; // Prevent icons from becoming too small
-  fill: currentColor; // Inherit color from heading
-  margin-right: 0.3em;
-  vertical-align: -0.125em; // Adjust for better alignment with text baseline
-}
+// Placeholder color adjustment for dark theme
+// Need to ensure the @include input-placeholder mixin correctly sets for webkit, moz, ms
+// For example, if the mixin is basic:
+// input:-webkit-input-placeholder { color: lighten($text-color-light, 20%); }
+// input::-moz-placeholder { color: lighten($text-color-light, 20%); opacity: 1; }
+// input:-ms-input-placeholder { color: lighten($text-color-light, 20%); }
 
-.funny-gallery-items {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); // Responsive grid
-  gap: 1.5rem; // Gap between items
-
-  @include mq('tablet') { // Example of adjusting columns for tablets
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
-}
-
-.funny-item {
-  background-color: $light-bg;
-  padding: 0.75rem;
-  border: 2px dashed $primary-color; // Funky border
-  border-radius: 8px; // Slightly rounded corners
-  box-shadow: 3px 3px 8px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-
-  img {
-    display: block; // Ensure block behavior, remove potential extra space
-    width: 100%; // Ensure image takes full width of its container
-    height: auto;
-    border-radius: 4px; // Rounded corners for the image itself
-  }
-
-  // Playful rotations - applied via nth-child for variety
-  &:nth-child(4n+1) { transform: rotate(-2deg); }
-  &:nth-child(4n+2) { transform: rotate(1.5deg); }
-  &:nth-child(4n+3) { transform: rotate(2.5deg); }
-  &:nth-child(4n+4) { transform: rotate(-1deg); }
-
-  &:hover {
-    transform: scale(1.08) rotate(0deg) !important; // Enlarge and straighten on hover, !important to override nth-child rotation
-    box-shadow: 6px 6px 15px rgba(0,0,0,0.2);
-    z-index: 10; // Bring hovered item to front
-    position: relative; // Needed for z-index to take effect on transformed items
-  }
-}
+// The old $grey variable is not used in this new theme structure.
+// The $text-color-dark is available if any component *must* have a light background.
+// For now, all primary surfaces are dark.

@@ -1,158 +1,240 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+let portfolioHorizontalScrollTrigger = null; // Store the main horizontal scrolltrigger
 
 document.addEventListener('DOMContentLoaded', () => {
-  initGSAPAnimations();
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+    console.error('GSAP or ScrollTrigger not loaded!');
+    return;
+  }
+  gsap.registerPlugin(ScrollTrigger);
+
+  portfolioHorizontalScrollTrigger = initPortfolioHorizontalScroll();
+  initGSAPContentAnimations(portfolioHorizontalScrollTrigger);
+
   if (document.getElementById('model-canvas')) {
     initThreeJSModel();
   }
+
+  ScrollTrigger.refresh();
 });
 
-function initGSAPAnimations() {
-  gsap.registerPlugin(ScrollTrigger);
+function initPortfolioHorizontalScroll() {
+  const portfolioWrapper = document.querySelector('#portfolio-horizontal-wrapper');
+  const portfolioSection = document.querySelector('#portfolio');
+  const slides = gsap.utils.toArray("#portfolio > .portfolio-items, #portfolio > .funny-gallery");
 
-  const sections = document.querySelectorAll('section[id]:not(#interactive-model)');
-  sections.forEach(section => {
-    const title = section.querySelector('h2');
-    if (title) {
-      gsap.fromTo(title,
-        { autoAlpha: 0, y: 50 },
-        {
-          autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out',
-          scrollTrigger: { trigger: section, start: 'top 80%', toggleActions: 'play none none none' }
-        }
-      );
-    }
+  if (!portfolioWrapper || !portfolioSection || slides.length === 0) {
+    console.warn('Portfolio horizontal scroll elements not found.');
+    return null;
+  }
+
+  const horizontalTween = gsap.to(portfolioSection, {
+    xPercent: -100 * (slides.length - 1),
+    ease: "none",
   });
 
-  const parallaxBg = document.querySelector('#parallax-bg');
-  if (parallaxBg) {
-    gsap.to(parallaxBg, {
-      backgroundPosition: '50% 100%', ease: 'none',
-      scrollTrigger: { trigger: '#portfolio', start: 'top bottom', end: 'bottom top', scrub: true }
+  const st = ScrollTrigger.create({
+    trigger: "#portfolio-horizontal-wrapper",
+    pin: true,
+    scrub: 1,
+    start: "top top",
+    end: () => "+=" + (portfolioWrapper.offsetHeight - window.innerHeight),
+    animation: horizontalTween,
+    invalidateOnRefresh: true,
+  });
+
+  return st;
+}
+
+
+function initGSAPContentAnimations(horizontalScrollTrigger) {
+  const mainTitles = gsap.utils.toArray('section[id]:not(#interactive-model):not(#portfolio) > h2, .funny-gallery > h3, #portfolio > h2');
+  mainTitles.forEach(title => {
+    gsap.fromTo(title,
+      { autoAlpha: 0, y: 50 },
+      {
+        autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out',
+        scrollTrigger: {
+          trigger: title,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+          invalidateOnRefresh: true
+        }
+      }
+    );
+  });
+
+  const verticalParagraphs = gsap.utils.toArray('#about p, #experience .job-entry p, #experience .job-entry ul li, #contact .contact-details p');
+  verticalParagraphs.forEach(p => {
+    gsap.fromTo(p, { autoAlpha: 0, y: 30 }, {
+      autoAlpha: 1, y: 0, duration: 0.6, ease: 'power1.out',
+      scrollTrigger: { trigger: p, start: 'top 90%', toggleActions: 'play none none none', once: true, invalidateOnRefresh: true }
+    });
+  });
+
+  const portfolioItems = gsap.utils.toArray('.portfolio-item');
+  if (portfolioItems.length > 0 && horizontalScrollTrigger) {
+    ScrollTrigger.batch(portfolioItems, {
+      containerAnimation: horizontalScrollTrigger,
+      start: "left 90%",
+      horizontal: true,
+      once: true,
+      onEnter: batch => gsap.fromTo(batch,
+        { autoAlpha: 0, x: 50, scale: 0.95 },
+        { autoAlpha: 1, x: 0, scale: 1, duration: 0.5, stagger: 0.15, ease: 'power2.out' }
+      ),
+      invalidateOnRefresh: true,
     });
   }
-}
 
-// Store the ScrollTrigger instance globally or in a wider scope to manage it
-let modelScrollTriggerInstance = null;
+  const portfolioItemParagraphs = gsap.utils.toArray('.portfolio-item p');
+  portfolioItemParagraphs.forEach(pItem => {
+      if (horizontalScrollTrigger) {
+        gsap.fromTo(pItem, {autoAlpha: 0, x: 20}, {
+            autoAlpha: 1, x: 0, duration: 0.4, ease: 'power1.out',
+            scrollTrigger: {
+                trigger: pItem,
+                containerAnimation: horizontalScrollTrigger,
+                start: "left 95%",
+                horizontal: true,
+                toggleActions: 'play none none none',
+                once: true,
+                invalidateOnRefresh: true,
+            }
+        });
+      }
+  });
 
-function animateModelWithScroll(modelMesh) {
-  if (!modelMesh) return;
-
-  // If a previous ScrollTrigger instance exists, kill it
-  if (modelScrollTriggerInstance) {
-    modelScrollTriggerInstance.kill();
-    modelScrollTriggerInstance = null;
+  const funnyItems = gsap.utils.toArray('.funny-item');
+  if (funnyItems.length > 0 && horizontalScrollTrigger) {
+    ScrollTrigger.batch(funnyItems, {
+      containerAnimation: horizontalScrollTrigger,
+      start: "left 90%",
+      horizontal: true,
+      once: true,
+      onEnter: batch => gsap.fromTo(batch,
+        { autoAlpha: 0, x: 40, scale: 0.9 },
+        { autoAlpha: 1, x: 0, scale: 1, duration: 0.5, stagger: 0.1, ease: 'circ.out' }
+      ),
+      invalidateOnRefresh: true,
+    });
   }
 
-  // Ensure model is reset to initial animation state if needed (GSAP might handle this)
-  // For example, if you are animating from a specific rotation/scale
-  modelMesh.rotation.y = 0;
-  modelMesh.rotation.x = 0;
-  // modelMesh.scale.set(originalScale.x, originalScale.y, originalScale.z);
-
-
-  const tl = gsap.timeline();
-  tl.to(modelMesh.rotation, { y: Math.PI * 2, x: Math.PI * 0.25, duration: 1 })
-    .to(modelMesh.scale, { x: 1.2, y: 1.2, z: 1.2, duration: 0.5, yoyo: true, repeat: 1 }, "-=0.5"); // Scale up and back during rotation
-
-  modelScrollTriggerInstance = ScrollTrigger.create({
-    trigger: "#interactive-model",
-    start: "top center",
-    end: "bottom center", // Animate throughout the section's visibility in center
-    scrub: 1, // Smoother scrubbing
-    animation: tl,
-    // markers: true, // For debugging
+  const jobEntries = gsap.utils.toArray('.job-entry');
+  jobEntries.forEach(entry => {
+    gsap.fromTo(entry, { autoAlpha: 0, x: -60 }, {
+      autoAlpha: 1, x: 0, duration: 0.7, ease: 'power2.out',
+      scrollTrigger: { trigger: entry, start: 'top 85%', toggleActions: 'play none none none', once: true, invalidateOnRefresh: true }
+    });
   });
 }
 
+let modelAppearScrollTriggerInstance = null;
+let originalModelScaleY = 1;
+
+function setupModelAppearAnimation(modelMesh) {
+  if (!modelMesh) return;
+  if (modelAppearScrollTriggerInstance) {
+    modelAppearScrollTriggerInstance.kill();
+    modelAppearScrollTriggerInstance = null;
+  }
+  originalModelScaleY = modelMesh.scale.y;
+  if (originalModelScaleY === 0) originalModelScaleY = 1;
+  modelMesh.scale.y = 0.01;
+
+  const tl = gsap.timeline();
+  tl.to(modelMesh.scale, { y: originalModelScaleY, duration: 1, ease: 'power2.out' });
+
+  // Change trigger from "body" to "#about" section for more contextual reveal
+  modelAppearScrollTriggerInstance = ScrollTrigger.create({
+    trigger: "#about", // Trigger when #about section comes into view
+    start: "top center", // Start when top of #about hits center of viewport
+    end: "+=400",
+    scrub: 1,
+    animation: tl,
+    once: true,
+    invalidateOnRefresh: true,
+    // markers: {startColor: "orange", endColor: "red", indent: 300}, // For debugging this specific trigger
+  });
+  console.log(`Setup "appear" animation for model (trigger: #about): ${modelMesh.uuid}, original Y scale: ${originalModelScaleY}`);
+}
 
 function initThreeJSModel() {
   const canvas = document.getElementById('model-canvas');
   if (!canvas) { console.error('Model canvas not found!'); return; }
 
-  let interactiveModelMesh = null; // Variable to hold the current mesh
+  let interactiveModelMesh = null;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf8f9fa);
-
-  const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-  camera.position.set(0, 0.5, 3);
-
-  const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.setClearColor(0x1a1a1a, 1);
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 0, 5);
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  const directionalLight = new THREE.DirectionalLight(0x16c9c3, 0.8);
   directionalLight.position.set(5, 10, 7.5);
   scene.add(directionalLight);
+  const pointLight = new THREE.PointLight(0xffffff, 0.3);
+  pointLight.position.set(-5, -5, 5);
+  scene.add(pointLight);
 
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
-  controls.minDistance = 1;
-  controls.maxDistance = 10;
-
-  // Fallback Cube
-  const fallbackGeometry = new THREE.BoxGeometry(0.8, 0.8, 0.8); // Slightly smaller
-  const fallbackMaterial = new THREE.MeshStandardMaterial({ color: 0x007bff });
+  const fallbackMaterial = new THREE.MeshStandardMaterial({
+    color: 0x16c9c3, transparent: true, opacity: 0.6
+  });
+  const fallbackGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
   const fallbackCube = new THREE.Mesh(fallbackGeometry, fallbackMaterial);
-  fallbackCube.position.y = 0.4; // Adjust if needed
+  fallbackCube.position.set(0, 0, 0);
   scene.add(fallbackCube);
   interactiveModelMesh = fallbackCube;
-  animateModelWithScroll(interactiveModelMesh); // Animate fallback initially
+  setupModelAppearAnimation(interactiveModelMesh);
 
-  // GLTF Loader
   const loader = new GLTFLoader();
   const modelURL = 'https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf';
 
   loader.load(modelURL, (gltf) => {
-    scene.remove(fallbackCube); // Remove fallback
-
+    scene.remove(fallbackCube);
     const model = gltf.scene;
     const box = new THREE.Box3().setFromObject(model);
-    const center = box.getCenter(new THREE.Vector3());
     const size = box.getSize(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
-    const scaleFactor = 1.5 / maxDim;
-
+    const scaleFactor = 0.5 / maxDim;
     model.scale.set(scaleFactor, scaleFactor, scaleFactor);
-    // Recalculate center with new scale to correctly position
+    const finalModelScaleY = model.scale.y;
     const scaledBox = new THREE.Box3().setFromObject(model);
     const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
-    model.position.sub(scaledCenter); // Center the scaled model at origin
-    // model.position.y += size.y * scaleFactor / 2; // Adjust y if pivot is at bottom
-
+    model.position.sub(scaledCenter);
+    model.position.set(1.5, -0.5, -2);
     scene.add(model);
-    interactiveModelMesh = model; // Update reference
-
-    // Re-initialize animation with the new model
-    animateModelWithScroll(interactiveModelMesh);
-
-    console.log('GLTF model loaded successfully.');
+    interactiveModelMesh = model;
+    interactiveModelMesh.scale.y = finalModelScaleY;
+    setupModelAppearAnimation(interactiveModelMesh);
+    console.log('GLTF model (DamagedHelmet placeholder) loaded. "Appear" animation active.');
   }, undefined, (error) => {
     console.error('Error loading GLTF model:', error);
-    console.log('Displaying fallback cube as model could not be loaded. Scroll animation active on fallback.');
-    // Fallback is already added and animated, so no specific action needed here for animation.
+    console.log('Displaying fallback cube. "Appear" animation active on fallback.');
   });
 
   function animate() {
-    controls.update();
+    if (interactiveModelMesh) {
+      interactiveModelMesh.rotation.y += 0.002;
+      interactiveModelMesh.rotation.x += 0.0005;
+    }
     renderer.render(scene, camera);
   }
   renderer.setAnimationLoop(animate);
 
   function onWindowResize() {
-    const newWidth = canvas.clientWidth; // Use clientWidth of canvas for responsive sizing
-    const newHeight = canvas.clientHeight;
-    camera.aspect = newWidth / newHeight;
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(newWidth, newHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
   let resizeTimeout;
@@ -160,5 +242,4 @@ function initThreeJSModel() {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(onWindowResize, 100);
   });
-  onWindowResize(); // Initial call
 }
