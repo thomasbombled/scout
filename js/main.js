@@ -85,7 +85,6 @@ function initGSAPContentAnimations(horizontalScrollTrigger) {
         { autoAlpha: 0, x: 50, scale: 0.95 },
         { autoAlpha: 1, x: 0, scale: 1, duration: 0.5, stagger: 0.15, ease: 'power2.out' }
       ),
-      invalidateOnRefresh: true,
     });
   }
 
@@ -118,7 +117,6 @@ function initGSAPContentAnimations(horizontalScrollTrigger) {
         { autoAlpha: 0, x: 40, scale: 0.9 },
         { autoAlpha: 1, x: 0, scale: 1, duration: 0.5, stagger: 0.1, ease: 'circ.out' }
       ),
-      invalidateOnRefresh: true,
     });
   }
 
