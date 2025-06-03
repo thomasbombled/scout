@@ -107,6 +107,7 @@ img {
 }
 
 // Styling for new sections
+#interactive-model,
 #about,
 #portfolio,
 #experience,
@@ -148,6 +149,26 @@ img {
   // background-attachment: fixed; // This creates a simple parallax, JS will provide more control
   z-index: -1; // Place it behind the content of the #portfolio section
   // Opacity can be adjusted if needed, e.g. opacity: 0.7;
+}
+
+// Styling for Interactive Model Section
+#interactive-model {
+  h2 { // Center title for this section specifically if desired
+    text-align: center;
+  }
+  // Ensure it has some space even if canvas fails to load
+  min-height: 100px;
+}
+
+#model-canvas {
+  display: block; // Remove extra space below canvas
+  width: 100%;
+  max-width: 600px; // Max width for the canvas
+  height: 400px;   // Fixed height for the canvas
+  margin: 1rem auto; // Center canvas and add some margin
+  background-color: $light-gray-bg; // Light background for the canvas area
+  border-radius: 4px; // Optional: if you want rounded corners
+  // border: 1px solid $border-color; // Optional: if you want a border
 }
 
 // Styling for Portfolio Items
@@ -323,5 +344,80 @@ img {
   #experience,
   #contact {
     padding: 1.5rem 0;
+  }
+
+  // Funny Gallery specific responsive adjustments
+  .funny-gallery-items {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); // Adjust minmax for smaller screens
+  }
+  .funny-item {
+    // No specific phablet changes needed if grid handles it,
+    // but you could adjust rotations or margins if desired
+  }
+}
+
+// Styling for Funny Gallery
+.funny-gallery {
+  margin-top: 3rem; // Space above the funny gallery subsection
+  padding-top: 1.5rem;
+  border-top: 1px dashed $border-color; // A playful separator
+
+  h3 {
+    text-align: center;
+    font-size: 1.6rem; // Slightly smaller than main section H2s
+    color: darken($primary-color, 10%); // A variation of primary for fun
+    margin-bottom: 1.5rem;
+    // text-transform: uppercase; // Optional: for a more "announcement" feel
+  }
+}
+
+// Styling for SVGs in headings
+section[id] > h2 > svg,
+.funny-gallery > h3 > svg {
+  width: 1em; // Relative to parent font size
+  height: 1em; // Relative to parent font size
+  min-width: 16px; // Prevent icons from becoming too small
+  min-height: 16px; // Prevent icons from becoming too small
+  fill: currentColor; // Inherit color from heading
+  margin-right: 0.3em;
+  vertical-align: -0.125em; // Adjust for better alignment with text baseline
+}
+
+.funny-gallery-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); // Responsive grid
+  gap: 1.5rem; // Gap between items
+
+  @include mq('tablet') { // Example of adjusting columns for tablets
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+.funny-item {
+  background-color: $light-bg;
+  padding: 0.75rem;
+  border: 2px dashed $primary-color; // Funky border
+  border-radius: 8px; // Slightly rounded corners
+  box-shadow: 3px 3px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  img {
+    display: block; // Ensure block behavior, remove potential extra space
+    width: 100%; // Ensure image takes full width of its container
+    height: auto;
+    border-radius: 4px; // Rounded corners for the image itself
+  }
+
+  // Playful rotations - applied via nth-child for variety
+  &:nth-child(4n+1) { transform: rotate(-2deg); }
+  &:nth-child(4n+2) { transform: rotate(1.5deg); }
+  &:nth-child(4n+3) { transform: rotate(2.5deg); }
+  &:nth-child(4n+4) { transform: rotate(-1deg); }
+
+  &:hover {
+    transform: scale(1.08) rotate(0deg) !important; // Enlarge and straighten on hover, !important to override nth-child rotation
+    box-shadow: 6px 6px 15px rgba(0,0,0,0.2);
+    z-index: 10; // Bring hovered item to front
+    position: relative; // Needed for z-index to take effect on transformed items
   }
 }

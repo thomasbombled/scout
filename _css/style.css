@@ -244,6 +244,7 @@ img {
 .article:after {
   clear: both; }
 
+#interactive-model,
 #about,
 #portfolio,
 #experience,
@@ -252,6 +253,7 @@ img {
   padding: 2rem 0;
   margin-bottom: 1.5rem;
   border-bottom: 1px solid #eeeeee; }
+  #interactive-model h2,
   #about h2,
   #portfolio h2,
   #experience h2,
@@ -260,6 +262,7 @@ img {
     color: #007bff;
     margin-top: 0;
     margin-bottom: 1rem; }
+  #interactive-model:last-child,
   #about:last-child,
   #portfolio:last-child,
   #experience:last-child,
@@ -282,6 +285,20 @@ img {
   background-size: cover;
   background-position: center center;
   z-index: -1; }
+
+#interactive-model {
+  min-height: 100px; }
+  #interactive-model h2 {
+    text-align: center; }
+
+#model-canvas {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  height: 400px;
+  margin: 1rem auto;
+  background-color: #f8f9fa;
+  border-radius: 4px; }
 
 .portfolio-items {
   display: flex;
@@ -412,4 +429,59 @@ img {
   #portfolio,
   #experience,
   #contact {
-    padding: 1.5rem 0; } }
+    padding: 1.5rem 0; }
+  .funny-gallery-items {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); } }
+
+.funny-gallery {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed #eeeeee; }
+  .funny-gallery h3 {
+    text-align: center;
+    font-size: 1.6rem;
+    color: #0062cc;
+    margin-bottom: 1.5rem; }
+
+section[id] > h2 > svg,
+.funny-gallery > h3 > svg {
+  width: 1em;
+  height: 1em;
+  min-width: 16px;
+  min-height: 16px;
+  fill: currentColor;
+  margin-right: 0.3em;
+  vertical-align: -0.125em; }
+
+.funny-gallery-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem; }
+  @media only screen and (min-width: 768px) {
+    .funny-gallery-items {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
+.funny-item {
+  background-color: #ffffff;
+  padding: 0.75rem;
+  border: 2px dashed #007bff;
+  border-radius: 8px;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; }
+  .funny-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 4px; }
+  .funny-item:nth-child(4n+1) {
+    transform: rotate(-2deg); }
+  .funny-item:nth-child(4n+2) {
+    transform: rotate(1.5deg); }
+  .funny-item:nth-child(4n+3) {
+    transform: rotate(2.5deg); }
+  .funny-item:nth-child(4n+4) {
+    transform: rotate(-1deg); }
+  .funny-item:hover {
+    transform: scale(1.08) rotate(0deg) !important;
+    box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    position: relative; }
