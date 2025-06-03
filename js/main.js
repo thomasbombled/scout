@@ -1,7 +1,11 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-let portfolioHorizontalScrollTrigger = null; // Store the main horizontal scrolltrigger
+let portfolioHorizontalScrollTrigger = null;
+let portfolioItemsBatchST = null;
+let funnyItemsBatchST = null;
+let modelAppearScrollTriggerInstance = null;
+let originalModelScaleY = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
@@ -11,12 +15,34 @@ document.addEventListener('DOMContentLoaded', () => {
   gsap.registerPlugin(ScrollTrigger);
 
   portfolioHorizontalScrollTrigger = initPortfolioHorizontalScroll();
-  initGSAPContentAnimations(portfolioHorizontalScrollTrigger);
+  // initGSAPContentAnimations no longer creates batch animations for horizontal items directly
+  initGSAPContentAnimations();
 
   if (document.getElementById('model-canvas')) {
     initThreeJSModel();
   }
 
+  ScrollTrigger.addEventListener('refreshInit', () => {
+    if (portfolioItemsBatchST) portfolioItemsBatchST.kill();
+    if (funnyItemsBatchST) funnyItemsBatchST.kill();
+    portfolioItemsBatchST = null; // Resetting stored instances
+    funnyItemsBatchST = null;
+  });
+
+  ScrollTrigger.addEventListener('refresh', () => {
+    if (portfolioHorizontalScrollTrigger && portfolioHorizontalScrollTrigger.isActive) {
+      const dependentBatches = createDependentBatchAnimations(portfolioHorizontalScrollTrigger);
+      portfolioItemsBatchST = dependentBatches.portfolioBatch;
+      funnyItemsBatchST = dependentBatches.funnyBatch;
+    } else {
+        // Fallback: If horizontal scroll isn't active, maybe create them as vertical?
+        // Or ensure they are not created if they strictly depend on horizontal scroll context.
+        // For now, they simply won't be created if horizontalScrollTrigger is not active.
+        console.log("Horizontal scroll trigger not active, dependent batches not created on refresh.");
+    }
+  });
+
+  // Initial refresh to trigger the 'refresh' event and create dependent batches
   ScrollTrigger.refresh();
 });
 
@@ -42,15 +68,88 @@ function initPortfolioHorizontalScroll() {
     start: "top top",
     end: () => "+=" + (portfolioWrapper.offsetHeight - window.innerHeight),
     animation: horizontalTween,
-    invalidateOnRefresh: true,
+    invalidateOnRefresh: true, // Main horizontal scroll needs this
   });
-
   return st;
 }
 
+function createDependentBatchAnimations(hScrollTrigger) {
+    let stPortfolio = null;
+    let stFunny = null;
 
-function initGSAPContentAnimations(horizontalScrollTrigger) {
-  const mainTitles = gsap.utils.toArray('section[id]:not(#interactive-model):not(#portfolio) > h2, .funny-gallery > h3, #portfolio > h2');
+    const portfolioItems = gsap.utils.toArray('.portfolio-item');
+    console.log("--- Portfolio Items Batch Creation ---");
+    console.log("Passed horizontalScrollTrigger (for portfolioItems):", hScrollTrigger);
+    console.log("portfolioItems array:", portfolioItems);
+    if (portfolioItems && portfolioItems.length > 0) { console.log("Are portfolioItems DOM elements?", portfolioItems.every(item => item instanceof Element)); } else { console.log("portfolioItems is empty or undefined"); }
+
+    if (portfolioItems.length > 0 && hScrollTrigger) {
+        stPortfolio = ScrollTrigger.batch(portfolioItems, {
+            containerAnimation: hScrollTrigger,
+            start: "left 90%",
+            horizontal: true,
+            once: true,
+            onEnter: batch => gsap.fromTo(batch,
+                { autoAlpha: 0, x: 50, scale: 0.95 },
+                { autoAlpha: 1, x: 0, scale: 1, duration: 0.5, stagger: 0.15, ease: 'power2.out' }
+            ),
+            // NO invalidateOnRefresh here for batches tied to containerAnimation
+        });
+    }
+
+    const portfolioItemParagraphs = gsap.utils.toArray('.portfolio-item p');
+    portfolioItemParagraphs.forEach(pItem => {
+        if (hScrollTrigger) {
+            gsap.fromTo(pItem, {autoAlpha: 0, x: 20}, {
+                autoAlpha: 1, x: 0, duration: 0.4, ease: 'power1.out',
+                scrollTrigger: {
+                    trigger: pItem,
+                    containerAnimation: hScrollTrigger,
+                    start: "left 95%",
+                    horizontal: true,
+                    toggleActions: 'play none none none',
+                    once: true,
+                    // NO invalidateOnRefresh here
+                }
+            });
+        }
+    });
+
+    const funnyItems = gsap.utils.toArray('.funny-item');
+    console.log("--- Funny Items Batch Creation ---");
+    console.log("Passed horizontalScrollTrigger (for funnyItems):", hScrollTrigger);
+    console.log("funnyItems array:", funnyItems);
+    if (funnyItems && funnyItems.length > 0) { console.log("Are funnyItems DOM elements?", funnyItems.every(item => item instanceof Element)); } else { console.log("funnyItems is empty or undefined"); }
+
+    if (funnyItems.length > 0 && hScrollTrigger) {
+        console.log("Creating batch for funnyItems with horizontal:true AND containerAnimation");
+        stFunny = ScrollTrigger.batch(funnyItems, {
+            containerAnimation: hScrollTrigger,
+            horizontal: true,
+            start: "left 90%",
+            once: true,
+            onEnter: batch => {
+                console.log("Batch onEnter for funnyItems (horizontal:true, containerAnimation):", batch);
+                gsap.fromTo(batch, {
+                    autoAlpha: 0, x: 40
+                },{
+                    autoAlpha: 1, x: 0, scale: 1, duration: 0.5, stagger: 0.1, ease: 'circ.out'
+                });
+            },
+            // NO invalidateOnRefresh here
+        });
+    }
+    return { portfolioBatch: stPortfolio, funnyBatch: stFunny };
+}
+
+
+function initGSAPContentAnimations() {
+  // This function now only handles animations NOT dependent on horizontal scroll's refresh cycle.
+  const mainTitles = gsap.utils.toArray('section[id]:not(#interactive-model):not(#portfolio) > h2, #portfolio > h2, .funny-gallery > h3');
+  // Note: #portfolio > h2 and .funny-gallery > h3 are tricky.
+  // If #portfolio > h2 is absolutely positioned relative to the first slide, its animation might be okay here.
+  // If .funny-gallery > h3 is part of the .funny-gallery slide, its animation should ideally be in createDependentBatchAnimations
+  // or triggered by the .funny-gallery slide itself. For now, keeping them here and assuming they trigger early.
   mainTitles.forEach(title => {
     gsap.fromTo(title,
       { autoAlpha: 0, y: 50 },
@@ -60,7 +159,7 @@ function initGSAPContentAnimations(horizontalScrollTrigger) {
           trigger: title,
           start: 'top 85%',
           toggleActions: 'play none none none',
-          invalidateOnRefresh: true
+          invalidateOnRefresh: true // These are fine as they are not container-animated
         }
       }
     );
@@ -74,52 +173,6 @@ function initGSAPContentAnimations(horizontalScrollTrigger) {
     });
   });
 
-  const portfolioItems = gsap.utils.toArray('.portfolio-item');
-  if (portfolioItems.length > 0 && horizontalScrollTrigger) {
-    ScrollTrigger.batch(portfolioItems, {
-      containerAnimation: horizontalScrollTrigger,
-      start: "left 90%",
-      horizontal: true,
-      once: true,
-      onEnter: batch => gsap.fromTo(batch,
-        { autoAlpha: 0, x: 50, scale: 0.95 },
-        { autoAlpha: 1, x: 0, scale: 1, duration: 0.5, stagger: 0.15, ease: 'power2.out' }
-      ),
-    });
-  }
-
-  const portfolioItemParagraphs = gsap.utils.toArray('.portfolio-item p');
-  portfolioItemParagraphs.forEach(pItem => {
-      if (horizontalScrollTrigger) {
-        gsap.fromTo(pItem, {autoAlpha: 0, x: 20}, {
-            autoAlpha: 1, x: 0, duration: 0.4, ease: 'power1.out',
-            scrollTrigger: {
-                trigger: pItem,
-                containerAnimation: horizontalScrollTrigger,
-                start: "left 95%",
-                horizontal: true,
-                toggleActions: 'play none none none',
-                once: true,
-                invalidateOnRefresh: true,
-            }
-        });
-      }
-  });
-
-  const funnyItems = gsap.utils.toArray('.funny-item');
-  if (funnyItems.length > 0 && horizontalScrollTrigger) {
-    ScrollTrigger.batch(funnyItems, {
-      containerAnimation: horizontalScrollTrigger,
-      start: "left 90%",
-      horizontal: true,
-      once: true,
-      onEnter: batch => gsap.fromTo(batch,
-        { autoAlpha: 0, x: 40, scale: 0.9 },
-        { autoAlpha: 1, x: 0, scale: 1, duration: 0.5, stagger: 0.1, ease: 'circ.out' }
-      ),
-    });
-  }
-
   const jobEntries = gsap.utils.toArray('.job-entry');
   jobEntries.forEach(entry => {
     gsap.fromTo(entry, { autoAlpha: 0, x: -60 }, {
@@ -128,9 +181,7 @@ function initGSAPContentAnimations(horizontalScrollTrigger) {
     });
   });
 }
-
-let modelAppearScrollTriggerInstance = null;
-let originalModelScaleY = 1;
+// ... (rest of the Three.js code: setupModelAppearAnimation, initThreeJSModel remains the same) ...
 
 function setupModelAppearAnimation(modelMesh) {
   if (!modelMesh) return;
@@ -145,16 +196,14 @@ function setupModelAppearAnimation(modelMesh) {
   const tl = gsap.timeline();
   tl.to(modelMesh.scale, { y: originalModelScaleY, duration: 1, ease: 'power2.out' });
 
-  // Change trigger from "body" to "#about" section for more contextual reveal
   modelAppearScrollTriggerInstance = ScrollTrigger.create({
-    trigger: "#about", // Trigger when #about section comes into view
-    start: "top center", // Start when top of #about hits center of viewport
+    trigger: "#about",
+    start: "top center",
     end: "+=400",
     scrub: 1,
     animation: tl,
     once: true,
     invalidateOnRefresh: true,
-    // markers: {startColor: "orange", endColor: "red", indent: 300}, // For debugging this specific trigger
   });
   console.log(`Setup "appear" animation for model (trigger: #about): ${modelMesh.uuid}, original Y scale: ${originalModelScaleY}`);
 }
