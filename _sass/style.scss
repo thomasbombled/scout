@@ -3,79 +3,325 @@
 @import 'nav';
 @import 'alert';
 
+// Light Color Scheme
+$light-bg: #ffffff;
+$light-gray-bg: #f8f9fa; // Slightly off-white for section distinction if needed
+$text-color: #333333;
+$primary-color: #007bff; // A clean blue for accents/links
+$border-color: #eeeeee; // Light border color for separation
 
+// Existing variable override (if $grey was used for anything other than dark text/backgrounds)
+// For a light theme, $grey might represent a darker accent or text.
+// Let's redefine it for its previous use or choose a new variable.
+// Given the original $grey: #cb5d1e; (orange/brown), it was likely an accent.
+// We'll use $primary-color for new accents and ensure $grey isn't causing issues.
+// For now, we'll keep $grey as is, in case it's used in imported partials for specific elements
+// not directly part of the main content background/text.
+$grey: #cb5d1e; // Original variable, assess if it needs to change based on its usage in partials
 
-$grey: #cb5d1e;
-$font: Arial,Helvetica,Sans-serif;
-$fonts: Times,serif;
-
-
-
-
+$font: Arial, Helvetica, Sans-serif;
+$fonts: Times, serif; // Typically for more decorative text like logo
 
 body {
-  font: 100% $font ;
-   }
-  
+  font: 100% $font;
+  color: $text-color;
+  background-color: $light-bg;
+  margin: 0;
+  padding: 0;
+}
+
 .container {
   width: 960px;
   margin: 0 auto;
+  padding: 0 1rem; // Add some padding to the container
 }
 
 article[role="main"] {
   float: left;
-  width: 600px / 960px * 100%;
-  }
-
-input,  
-textarea {  
-    @include input-placeholder {
-        color: $grey;
-    }
+  width: 600px / 960px * 100%; // Approx 62.5%
 }
-  
+
 aside[role="complementary"] {
   float: right;
-  width: 300px / 960px * 100%;
-  }
-img {
-    @include responsive-ratio(16,9);
+  width: 300px / 960px * 100%; // Approx 31.25%
 }
 
+// Clearfix for floated elements like article and aside
+.container::after {
+  content: "";
+  display: table;
+  clear: both;
+}
 
+input,
+textarea {
+  @include input-placeholder {
+    color: $text-color; // Use main text color for placeholder, or a lighter shade like #777
+  }
+  border: 1px solid $border-color;
+  padding: 0.5rem;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+img {
+  // @include responsive-ratio(16, 9); // Removed global aspect ratio forcing
+  max-width: 100%;
+  height: auto;
+  display: block; // Remove extra space below image
+}
 
 .site-header {
-    padding: 2rem;
-    font-size: 1.8rem;
-	    z-index: z('site-header');
+  padding: 1rem 0; // Adjusted padding
+  // background-color: $light-gray-bg; // Example light background for header
+  border-bottom: 1px solid $border-color;
+  margin-bottom: 2rem;
+  z-index: z('site-header'); // Assuming z-function is from _function.scss
 
-    @include mq('tablet-wide') {
-        padding-top: 0;
-        font-size: 2.4rem;
-		background: $grey;
-    }
-	@include mq('desktop') {
-        padding-top: 0rem;
-        font-size: 4rem;
-    }
+  @include mq('tablet-wide') {
+    padding-top: 1rem; // Keep consistent padding
+    // background: $light-gray-bg; // Remove old $grey background
+  }
+  @include mq('desktop') {
+    padding-top: 1rem;
+  }
 }
 
 .logo {
-  font-family:  $fonts ;
+  font-family: $fonts;
+  text-align: center;
+  z-index: z('logo');
+  @include truncate(85px); // Assuming this is a text truncation mixin
+  // convert-angle("90deg",rad); // This seems like an odd function call here, review if necessary
+  color: $primary-color; // Style logo with primary color
+}
 
-text-align:center;
-z-index: z('logo');
-  @include truncate(85px);
-    convert-angle("90deg",rad);
+.logo:after {
+  // @include css-triangle(#f8001d, right,  6px ); // Original red triangle, consider changing color or removing
+  @include css-triangle($primary-color, right, 6px); // Use primary color for triangle
+}
+
+.article { // This class seems to be unused in index.html, but keeping for completeness
+  @include clearfix();
+}
+
+// Styling for new sections
+#about,
+#portfolio,
+#experience,
+#contact {
+  position: relative; // For positioning parallax background or other absolute elements if needed
+  padding: 2rem 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid $border-color;
+
+  h2 {
+    font-size: 1.8rem;
+    color: $primary-color;
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  // Remove border from the last section
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+}
+
+#portfolio {
+  position: relative; // Needed for z-index stacking of parallax background
+  overflow: hidden; // Prevent parallax bg from spilling if it's larger
+  z-index: 1; // Ensure content is above parallax background
+}
+
+#parallax-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://via.placeholder.com/1500x800.png?text=Parallax+Background'); // Placeholder image
+  background-size: cover;
+  background-position: center center;
+  // background-attachment: fixed; // This creates a simple parallax, JS will provide more control
+  z-index: -1; // Place it behind the content of the #portfolio section
+  // Opacity can be adjusted if needed, e.g. opacity: 0.7;
+}
+
+// Styling for Portfolio Items
+.portfolio-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem; // Space between items
+  margin-top: 1rem;
+}
+
+.portfolio-item {
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  padding: 1rem;
+  background-color: $light-bg;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  flex-basis: calc(50% - 0.5rem); // Two items per row on larger screens, considering gap
+
+  @include mq('phablet') {
+    flex-basis: 100%; // Full width on smaller screens
+  }
+
+  img {
+    margin-bottom: 0.75rem;
+    border-radius: 4px;
+  }
+  h3 {
+    font-size: 1.2rem;
+    color: $primary-color;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+  p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 0;
+  }
+}
+
+// Styling for Experience Entries
+.job-entry {
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+  border-left: 3px solid $primary-color;
+
+  h3 {
+    font-size: 1.3rem;
+    color: $text-color; // Or $primary-color if preferred
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+  }
+  .company-dates {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: lighten($text-color, 20%);
+    margin-bottom: 0.5rem;
+  }
+  ul {
+    padding-left: 1.2rem;
+    margin-bottom: 0;
+    li {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 0.25rem;
+    }
+  }
+}
+
+// Styling for Contact Form
+.contact-form-container {
+  max-width: 600px; // Limit form width for better readability
+  margin: 0 auto; // Center it if article[role="main"] is wider
+  padding: 1rem 0;
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: $text-color;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  textarea { // General textarea styles already updated above
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    box-sizing: border-box; // Ensure padding doesn't expand element width
+    font-family: $font;
+    font-size: 1rem;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.25);
+    }
   }
   
- .logo:after {
-  @include css-triangle(#f8001d, right,  6px );
- }
- 
- 
- 
- 
- .article {
-     @include clearfix();
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+}
+
+// General Button Styling (can be extracted to a button component later)
+.button, button[type="submit"] { // Target generic .button class and the specific submit
+  display: inline-block;
+  background-color: $primary-color;
+  color: $light-bg;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover, &:focus {
+    background-color: darken($primary-color, 10%);
+    outline: none;
+  }
+}
+
+.contact-details {
+  margin-top: 2rem;
+  text-align: center; // Center the "Or reach out via" text
+  p {
+    margin-bottom: 0.5rem;
+  }
+  a {
+    color: $primary-color;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+
+// Basic responsive adjustments
+@include mq('phablet') { // Assuming 'phablet' is a breakpoint from _mixin.scss
+  .container {
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  article[role="main"],
+  aside[role="complementary"] {
+    width: 100%;
+    float: none;
+    margin-bottom: 1rem;
+  }
+
+  .site-header {
+    text-align: center; // Center header content on small screens
+    nav ul {
+      padding-left: 0; // Remove default padding
+      li {
+        display: block; // Stack nav items
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
+  #about,
+  #portfolio,
+  #experience,
+  #contact {
+    padding: 1.5rem 0;
+  }
 }

@@ -4,16 +4,98 @@
 <meta charset="utf-8">
 <title>Sass</title>
 	<link rel="stylesheet" href="_css/style.css" />
+	<!-- Placeholder for Three.js canvas styling if needed -->
 </head>
 
 <body> 
 	<div class="container"><div class="site-header"><h1 class="logo">Logo</h1><nav><ul><li><a href="1.php">Home</a></li>
-		<li><a href="1.php">Portfolio</a></li>
-		<li><a href="1.php">Showcase<br>Pporta</a></li>
-		<li><a href="1.php">Contact</a></li></ul><div style="float:left;">dddqesz</div></div>
+		<li><a href="#about">About</a></li>
+		<li><a href="#portfolio">Portfolio</a></li>
+		<li><a href="#experience">Experience</a></li>
+		<li><a href="#contact">Contact</a></li></ul></nav></div>
 		<aside role="complementary"><input type="text" placeholder="votre nom" />sqdqsd dqsdssqdqsd dqsdssqdqsd dqsdssqdqsd dqsds</aside>
-		<article role="main"><div class="box">dfdfdf</div><div class="alert">dfdfdf</div>
-			sqdqsd dqsdssqdqsd dqsdssqdqsd dqsds sqdqsd dqsdssqdqsd dqsdssqdqsd dqsds</article></div>
-	 
+		<article role="main">
+			<section id="about">
+				<h2>About Me</h2>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+				<p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+			</section>
+			<section id="portfolio">
+				<div id="parallax-bg"></div>
+				<h2>Portfolio</h2>
+				<div class="portfolio-items">
+					<div class="portfolio-item">
+						<img src="https://via.placeholder.com/300x200?text=Project+Alpha" alt="Project Alpha Placeholder">
+						<h3>Project Alpha</h3>
+						<p>A brief description of Project Alpha, highlighting key technologies and outcomes. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+					</div>
+					<div class="portfolio-item">
+						<img src="https://via.placeholder.com/300x200?text=Project+Beta" alt="Project Beta Placeholder">
+						<h3>Project Beta</h3>
+						<p>Details about Project Beta, focusing on the challenges and solutions. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+					</div>
+					<div class="portfolio-item">
+						<img src="https://via.placeholder.com/300x200?text=Project+Gamma" alt="Project Gamma Placeholder">
+						<h3>Project Gamma</h3>
+						<p>An overview of Project Gamma, its purpose, and impact. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.</p>
+					</div>
+				</div>
+			</section>
+			<section id="experience">
+				<h2>Experience</h2>
+				<div class="job-entry">
+					<h3>Senior Widget Engineer</h3>
+					<p class="company-dates">Innovatech Solutions | Jan 2020 - Present</p>
+					<ul>
+						<li>Led the development of next-generation widget frameworks.</li>
+						<li>Collaborated with cross-functional teams to define product specifications.</li>
+						<li>Mentored junior engineers and improved team productivity by 15%.</li>
+					</ul>
+				</div>
+				<div class="job-entry">
+					<h3>Junior Gadget Developer</h3>
+					<p class="company-dates">Gadgetron Inc. | Jun 2018 - Dec 2019</p>
+					<ul>
+						<li>Assisted in the design and implementation of new gadget features.</li>
+						<li>Conducted testing and debugging of software components.</li>
+						<li>Contributed to documentation and knowledge sharing within the team.</li>
+					</ul>
+				</div>
+			</section>
+			<section id="contact">
+				<h2>Contact</h2>
+				<div class="contact-form-container">
+					<form action="#" method="POST">
+						<div class="form-group">
+							<label for="name">Name:</label>
+							<input type="text" id="name" name="name" required>
+						</div>
+						<div class="form-group">
+							<label for="email">Email:</label>
+							<input type="email" id="email" name="email" required>
+						</div>
+						<div class="form-group">
+							<label for="message">Message:</label>
+							<textarea id="message" name="message" rows="5" required></textarea>
+						</div>
+						<button type="submit" class="button">Send Message</button>
+					</form>
+				</div>
+				<div class="contact-details">
+					<p>Or reach out via:</p>
+					<p>Email: <a href="mailto:placeholder@example.com">placeholder@example.com</a></p>
+					<p>Social:
+						<a href="#" target="_blank">LinkedIn</a> |
+						<a href="#" target="_blank">Twitter</a> |
+						<a href="#" target="_blank">GitHub</a>
+					</p>
+				</div>
+			</section>
+		</article></div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+	<script src="js/main.js"></script>
 </body>
 </html>

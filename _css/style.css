@@ -1,52 +1,32 @@
 @keyframes alertMe {
   from {
     border-width: 3px;
-    border-color: gold;
-  }
+    border-color: gold; }
   to {
     border-width: 0;
-    border-color: rgba(255, 215, 0, 0.1);
-  }
-}
+    border-color: rgba(255, 215, 0, 0.1); } }
 
-/* line 4, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
 nav ul {
   margin: 0;
   padding: 0;
-  list-style: none;
-}
+  list-style: none; }
+  nav ul:before, nav ul:after {
+    content: "";
+    display: table; }
+  nav ul:after {
+    clear: both; }
 
-/* line 109, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-nav ul:before, nav ul:after {
-  content: "";
-  display: table;
-}
-
-/* line 114, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-nav ul:after {
-  clear: both;
-}
-
-/* line 11, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
 nav li {
   display: block;
   height: 60px;
   float: left;
-  padding: 0 15px;
-}
+  padding: 0 15px; }
+  nav li:before, nav li:after {
+    content: "";
+    display: table; }
+  nav li:after {
+    clear: both; }
 
-/* line 109, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-nav li:before, nav li:after {
-  content: "";
-  display: table;
-}
-
-/* line 114, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-nav li:after {
-  clear: both;
-}
-
-/* line 19, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
 nav a {
   display: block;
   padding: 6px 12px;
@@ -59,33 +39,20 @@ nav a {
   top: 50%;
   -webkit-transform: translateY(-50%);
   -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
+  transform: translateY(-50%); }
 
-/* line 30, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
 .site-header {
   padding: 2rem;
   font-size: 1.8rem;
-  z-index: 4;
-}
-
-@media only screen and (min-width: 1024px) {
-  /* line 30, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
-  .site-header {
-    padding-top: 4rem;
-    font-size: 2.4rem;
-  }
-}
-
-@media only screen and (min-width: 1248px) {
-  /* line 30, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
-  .site-header {
-    padding-top: 6rem;
-    font-size: 4rem;
-  }
-}
-
-/* line 150, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
+  z-index: 4; }
+  @media only screen and (min-width: 1024px) {
+    .site-header {
+      padding-top: 4rem;
+      font-size: 2.4rem; } }
+  @media only screen and (min-width: 1248px) {
+    .site-header {
+      padding-top: 6rem;
+      font-size: 4rem; } }
 .alert:before {
   content: '';
   position: absolute;
@@ -97,10 +64,8 @@ nav a {
   -moz-border-radius: 10px;
   -ms-border-radius: 10px;
   border-radius: 10px;
-  background-color: gold;
-}
+  background-color: gold; }
 
-/* line 158, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
 .alert:after {
   content: '';
   position: absolute;
@@ -121,20 +86,16 @@ nav a {
   -webkit-animation: alertMe 1000ms infinite ease 0ms;
   -moz-animation: alertMe 1000ms infinite ease 0ms;
   -o-animation: alertMe 1000ms infinite ease 0ms;
-  animation: alertMe 1000ms infinite ease 0ms;
-}
+  animation: alertMe 1000ms infinite ease 0ms; }
 
-/* line 48, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
 .logo {
   text-align: center;
   z-index: 3;
   max-width: 85px;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
+  text-overflow: ellipsis; }
 
-/* line 54, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_nav.scss */
 .logo:after {
   position: absolute;
   width: 0;
@@ -142,21 +103,15 @@ nav a {
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
   border-left: 6px solid #f8001d;
-  margin-right: -6px;
-}
+  margin-right: -6px; }
 
-/* line 109, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
 .article:before, .article:after {
   content: "";
-  display: table;
-}
+  display: table; }
 
-/* line 114, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
 .article:after {
-  clear: both;
-}
+  clear: both; }
 
-/* line 2, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_alert.scss */
 .alert {
   position: relative;
   display: block;
@@ -164,131 +119,105 @@ nav a {
   text-align: center;
   background: #333;
   color: #fff;
-  padding: 15px;
-}
+  padding: 15px; }
+  .alert:before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    height: 8px;
+    width: 8px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    border-radius: 10px;
+    background-color: gold; }
+  .alert:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 20px;
+    width: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    border-radius: 20px;
+    background-color: transparent;
+    border: solid gold;
+    border-width: 2px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-animation: alertMe 1000ms infinite ease 0ms;
+    -moz-animation: alertMe 1000ms infinite ease 0ms;
+    -o-animation: alertMe 1000ms infinite ease 0ms;
+    animation: alertMe 1000ms infinite ease 0ms; }
 
-/* line 150, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-.alert:before {
-  content: '';
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  height: 8px;
-  width: 8px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  border-radius: 10px;
-  background-color: gold;
-}
-
-/* line 158, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-.alert:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 20px;
-  width: 20px;
-  -webkit-border-radius: 20px;
-  -moz-border-radius: 20px;
-  -ms-border-radius: 20px;
-  border-radius: 20px;
-  background-color: transparent;
-  border: solid gold;
-  border-width: 2px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-animation: alertMe 1000ms infinite ease 0ms;
-  -moz-animation: alertMe 1000ms infinite ease 0ms;
-  -o-animation: alertMe 1000ms infinite ease 0ms;
-  animation: alertMe 1000ms infinite ease 0ms;
-}
-
-/* line 16, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
 body {
   font: 100% Arial, Helvetica, Sans-serif;
-}
+  color: #333333;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0; }
 
-/* line 20, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
 .container {
   width: 960px;
   margin: 0 auto;
-}
+  padding: 0 1rem; }
 
-/* line 25, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
 article[role="main"] {
   float: left;
-  width: 62.5%;
-}
+  width: 62.5%; }
 
-/* line 32, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-input.placeholder,
-textarea.placeholder {
-  color: #cb5d1e;
-}
-
-/* line 33, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-input:-moz-placeholder,
-textarea:-moz-placeholder {
-  color: #cb5d1e;
-}
-
-/* line 34, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-input::-moz-placeholder,
-textarea::-moz-placeholder {
-  color: #cb5d1e;
-}
-
-/* line 35, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-  color: #cb5d1e;
-}
-
-/* line 36, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
-input::-webkit-input-placeholder,
-textarea::-webkit-input-placeholder {
-  color: #cb5d1e;
-}
-
-/* line 37, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
 aside[role="complementary"] {
   float: right;
-  width: 31.25%;
-}
+  width: 31.25%; }
 
-/* line 41, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+.container::after {
+  content: "";
+  display: table;
+  clear: both; }
+
+input,
+textarea {
+  border: 1px solid #eeeeee;
+  padding: 0.5rem;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box; }
+  input.placeholder,
+  textarea.placeholder {
+    color: #333333; }
+  input:-moz-placeholder,
+  textarea:-moz-placeholder {
+    color: #333333; }
+  input::-moz-placeholder,
+  textarea::-moz-placeholder {
+    color: #333333; }
+  input:-ms-input-placeholder,
+  textarea:-ms-input-placeholder {
+    color: #333333; }
+  input::-webkit-input-placeholder,
+  textarea::-webkit-input-placeholder {
+    color: #333333; }
+
 img {
-  padding-top: 56.25%;
-}
+  max-width: 100%;
+  height: auto;
+  display: block; }
 
-/* line 47, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
 .site-header {
-  padding: 2rem;
-  font-size: 1.8rem;
-  z-index: 4;
-}
-
-@media only screen and (min-width: 1024px) {
-  /* line 47, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
-  .site-header {
-    padding-top: 0;
-    font-size: 2.4rem;
-    background: #cb5d1e;
-  }
-}
-
-@media only screen and (min-width: 1248px) {
-  /* line 47, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
-  .site-header {
-    padding-top: 0rem;
-    font-size: 4rem;
-  }
-}
-
-/* line 63, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
+  padding: 1rem 0;
+  border-bottom: 1px solid #eeeeee;
+  margin-bottom: 2rem;
+  z-index: 4; }
+  @media only screen and (min-width: 1024px) {
+    .site-header {
+      padding-top: 1rem; } }
+  @media only screen and (min-width: 1248px) {
+    .site-header {
+      padding-top: 1rem; } }
 .logo {
   font-family: Times, serif;
   text-align: center;
@@ -297,28 +226,190 @@ img {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
+  color: #007bff; }
 
-/* line 71, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/style.scss */
 .logo:after {
   position: absolute;
   width: 0;
   height: 0;
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
-  border-left: 6px solid #f8001d;
-  margin-right: -6px;
-}
+  border-left: 6px solid #007bff;
+  margin-right: -6px; }
 
-/* line 109, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
 .article:before, .article:after {
   content: "";
-  display: table;
-}
+  display: table; }
 
-/* line 114, C:/Users/Thomas/Documents/WORK/TESTS/scout_proj/_sass/_mixin.scss */
 .article:after {
-  clear: both;
-}
+  clear: both; }
 
-/*# sourceMappingURL=../_css/style.map */
+#about,
+#portfolio,
+#experience,
+#contact {
+  position: relative;
+  padding: 2rem 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eeeeee; }
+  #about h2,
+  #portfolio h2,
+  #experience h2,
+  #contact h2 {
+    font-size: 1.8rem;
+    color: #007bff;
+    margin-top: 0;
+    margin-bottom: 1rem; }
+  #about:last-child,
+  #portfolio:last-child,
+  #experience:last-child,
+  #contact:last-child {
+    border-bottom: none;
+    margin-bottom: 0; }
+
+#portfolio {
+  position: relative;
+  overflow: hidden;
+  z-index: 1; }
+
+#parallax-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3)), url("https://via.placeholder.com/1500x800.png?text=Parallax+Background");
+  background-size: cover;
+  background-position: center center;
+  z-index: -1; }
+
+.portfolio-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem; }
+
+.portfolio-item {
+  border: 1px solid #eeeeee;
+  border-radius: 4px;
+  padding: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  flex-basis: calc(50% - 0.5rem); }
+  @media only screen and (min-width: 560px) {
+    .portfolio-item {
+      flex-basis: 100%; } }
+  .portfolio-item img {
+    margin-bottom: 0.75rem;
+    border-radius: 4px; }
+  .portfolio-item h3 {
+    font-size: 1.2rem;
+    color: #007bff;
+    margin-top: 0;
+    margin-bottom: 0.5rem; }
+  .portfolio-item p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 0; }
+
+.job-entry {
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+  border-left: 3px solid #007bff; }
+  .job-entry h3 {
+    font-size: 1.3rem;
+    color: #333333;
+    margin-top: 0;
+    margin-bottom: 0.25rem; }
+  .job-entry .company-dates {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #666666;
+    margin-bottom: 0.5rem; }
+  .job-entry ul {
+    padding-left: 1.2rem;
+    margin-bottom: 0; }
+    .job-entry ul li {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 0.25rem; }
+
+.contact-form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem 0; }
+  .contact-form-container .form-group {
+    margin-bottom: 1rem; }
+  .contact-form-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #333333; }
+  .contact-form-container input[type="text"],
+  .contact-form-container input[type="email"],
+  .contact-form-container textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #eeeeee;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, Sans-serif;
+    font-size: 1rem; }
+    .contact-form-container input[type="text"]:focus,
+    .contact-form-container input[type="email"]:focus,
+    .contact-form-container textarea:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); }
+  .contact-form-container textarea {
+    min-height: 120px;
+    resize: vertical; }
+
+.button, button[type="submit"] {
+  display: inline-block;
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out; }
+  .button:hover, .button:focus, button[type="submit"]:hover, button[type="submit"]:focus {
+    background-color: #0062cc;
+    outline: none; }
+
+.contact-details {
+  margin-top: 2rem;
+  text-align: center; }
+  .contact-details p {
+    margin-bottom: 0.5rem; }
+  .contact-details a {
+    color: #007bff;
+    text-decoration: none; }
+    .contact-details a:hover {
+      text-decoration: underline; }
+
+@media only screen and (min-width: 560px) {
+  .container {
+    width: 100%;
+    padding: 0 1rem; }
+  article[role="main"],
+  aside[role="complementary"] {
+    width: 100%;
+    float: none;
+    margin-bottom: 1rem; }
+  .site-header {
+    text-align: center; }
+    .site-header nav ul {
+      padding-left: 0; }
+      .site-header nav ul li {
+        display: block;
+        margin-bottom: 0.5rem; }
+  #about,
+  #portfolio,
+  #experience,
+  #contact {
+    padding: 1.5rem 0; } }
