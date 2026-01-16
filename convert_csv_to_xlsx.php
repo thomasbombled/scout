@@ -10,14 +10,21 @@
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Note sur le namespace :
-// La documentation officielle utilise souvent Swagger\Client par défaut pour ses SDK générés.
-// Si vous rencontrez une erreur "Class not found", essayez de remplacer Swagger\Client par Cloudmersive\ApiClient.
+/**
+ * Note sur le namespace :
+ * Selon la version du SDK installée, le namespace peut être :
+ * - Swagger\Client (le plus fréquent dans la documentation)
+ * - Cloudmersive\ApiClient
+ */
+use Swagger\Client\Configuration;
+use Swagger\Client\Api\ConvertDocumentApi;
+// use Cloudmersive\ApiClient\Configuration; // Alternative
+// use Cloudmersive\ApiClient\Api\ConvertDocumentApi; // Alternative
 
 // Configuration de la clé API
-$config = Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Apikey', 'VOTRE_CLE_API_ICI');
+$config = Configuration::getDefaultConfiguration()->setApiKey('Apikey', 'VOTRE_CLE_API_ICI');
 
-$apiInstance = new Swagger\Client\Api\ConvertDocumentApi(
+$apiInstance = new ConvertDocumentApi(
     new GuzzleHttp\Client(),
     $config
 );
@@ -29,17 +36,27 @@ if (!file_exists($input_path)) {
     die("Le fichier $input_path est introuvable.");
 }
 
-// L'API attend un objet SplFileObject
+// L'API attend souvent un objet SplFileObject pour le téléchargement de fichiers
 $input_file = new \SplFileObject($input_path);
 
 try {
     // Conversion du fichier CSV en XLSX
-    // Le résultat retourné est un SplFileObject pointant vers un fichier temporaire contenant le binaire XLSX
     $result = $apiInstance->convertDocumentCsvToXlsx($input_file);
 
-    // Récupérer le chemin réel du fichier généré pour la lecture
-    $tempFilePath = $result->getRealPath();
-    $fileSize = filesize($tempFilePath);
+    /**
+     * Correction de l'erreur : "Call to a member function getRealPath() on string"
+     * L'API retourne directement le contenu binaire du fichier sous forme de chaîne (string).
+     */
+    if (is_string($result)) {
+        $content = $result;
+        $fileSize = strlen($content);
+    } else if (is_object($result) && method_exists($result, 'getRealPath')) {
+        // Au cas où une version spécifique retournerait un SplFileObject
+        $content = file_get_contents($result->getRealPath());
+        $fileSize = strlen($content);
+    } else {
+        throw new Exception("Format de réponse inconnu de l'API.");
+    }
 
     // Préparation du téléchargement du fichier XLSX
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -48,8 +65,8 @@ try {
     header('Cache-Control: must-revalidate');
     header('Pragma: public');
 
-    // Envoyer le contenu binaire du fichier
-    readfile($tempFilePath);
+    // Envoyer le contenu binaire
+    echo $content;
     exit;
 
 } catch (Exception $e) {
