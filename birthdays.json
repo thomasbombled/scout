@@ -1,4 +1,12 @@
 [
-  {"nom": "nomtest", "datenaissance": "1981-04-15"},
-  {"nom": "nomtest2", "datenaissance": "1977-01-21"}
+  {
+    "nom": "nomtest",
+    "datenaissance": "1981-04-15",
+    "image": "https://i.pravatar.cc/150?u=nomtest"
+  },
+  {
+    "nom": "nomtest2",
+    "datenaissance": "1977-01-21",
+    "image": "https://i.pravatar.cc/150?u=nomtest2"
+  }
 ]
