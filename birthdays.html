@@ -242,6 +242,17 @@
         return nextBirthday;
     }
 
+    function calculateAge(birthDateStr) {
+        const birthDate = new Date(birthDateStr);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
     function displayBirthdays() {
         calendarEl.innerHTML = '';
         const sorted = birthdays.map(p => ({...p, nextDate: getNextBirthdayDate(p.datenaissance)}))
@@ -250,13 +261,15 @@
 
         sorted.forEach(person => {
             const isToday = person.nextDate.toDateString() === todayStr;
+            const age = calculateAge(person.datenaissance);
             const card = document.createElement('div');
             card.className = `birthday-card ${isToday ? 'today' : ''}`;
             const options = { day: 'numeric', month: 'long' };
             card.innerHTML = `
                 <h3 class="h5 mb-3">${person.nom} ${isToday ? '🎈' : ''}</h3>
                 <img src="${person.image || 'https://i.pravatar.cc/150'}" class="person-image" alt="${person.nom}">
-                <p class="mb-1 small">Né(e) le ${new Date(person.datenaissance).toLocaleDateString('fr-FR')}</p>
+                <p class="mb-0 small">Né(e) le ${new Date(person.datenaissance).toLocaleDateString('fr-FR')}</p>
+                <p class="mb-1 fw-bold text-primary">${age} ans</p>
                 <div class="date-badge">${isToday ? "C'est aujourd'hui !" : 'Le ' + person.nextDate.toLocaleDateString('fr-FR', options)}</div>
             `;
             calendarEl.appendChild(card);
