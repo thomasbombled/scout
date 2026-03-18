@@ -1,0 +1,69 @@
+{
+  "header": "ORGANIGRAMME",
+  "sidebar_left": [
+    "ACTIONNAIRE",
+    "INSERM"
+  ],
+  "sidebar_right": {
+    "title": "ORGANES DE GOUVERNANCE",
+    "items": [
+      "DIRECTOIRE INSERM TRANSFERT",
+      "CONSEIL DE SURVEILLANCE",
+      "COPIL INSERM/INSERM TRANSFERT (CSP)"
+    ]
+  },
+  "main_tree": {
+    "label": "INSERM TRANSFERT",
+    "sub": {
+      "label": "PRESIDENTE DU DIRECTOIRE",
+      "name": "Pascale Auge",
+      "children": [
+        {
+          "department": "PARTENARIATS INSTITUTIONNELS & RELATIONS EXTERIEURES/ COMMUNICATION EXTERNE",
+          "manager": "Sandrine AYUSO",
+          "color": "#d9ead3"
+        },
+        {
+          "department": "ACCELERATION DU DÉVELOPPEMENT DES INNOVATIONS ET ENTREPRENEURIAT",
+          "manager": "Savita BERNAL",
+          "color": "#93c47d"
+        },
+        {
+          "department": "RESSOURCES HUMAINES & COMMUNICATION INTERNE",
+          "manager": "Karine BUISSON-MARCHAND",
+          "color": "#00b050"
+        },
+        {
+          "department": "FINANCEMENT DE LA RECHERCHE COLLABORATIVE",
+          "manager": "Catherine CLUSEL",
+          "color": "#6aa84f"
+        },
+        {
+          "department": "PROPRIETE INTELLECTUELLE",
+          "manager": "Matthieu COLLIN",
+          "color": "#38761d"
+        },
+        {
+          "department": "EVALUATION MATURATION & DEVELOPPEMENT",
+          "manager": "Jean-Michel GAUTHIER",
+          "color": "#ead1dc"
+        },
+        {
+          "department": "FINANCE & ADMINISTRATION",
+          "manager": "Louis JAMMAYRAC",
+          "color": "#f4cccc"
+        },
+        {
+          "department": "BUSINESS DEVELOPPEMENT ET LICENSING",
+          "manager": "Noémie PELLEGRIN",
+          "color": "#c27ba0"
+        },
+        {
+          "department": "AFFAIRES JURIDIQUES",
+          "manager": "Anne-Sophie SEBIRE",
+          "color": "#a64d79"
+        }
+      ]
+    }
+  }
+}
