@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rappel d'Anniversaires</title>
+    <link rel="manifest" href="manifest.json">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --accent-color: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container-custom {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .btn-custom {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-custom:hover {
+            background-color: #4338ca;
+            color: white;
+        }
+
+        .btn-test {
+            background-color: var(--text-muted);
+            color: white;
+        }
+
+        .mobile-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 15px;
+        }
+
+        .calendar-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .birthday-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-top: 6px solid var(--accent-color);
+            transition: transform 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .birthday-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .birthday-card.today {
+            border-top-color: #10b981;
+            background-color: #f0fdf4;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .person-image {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 4px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .date-badge {
+            background: #f3f4f6;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 15px;
+            color: var(--primary-color);
+        }
+
+        /* Toast positioning */
+        .toast-container {
+            z-index: 1060;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-custom">
+    <header>
+        <h1>🎂 Rappels d'Anniversaires</h1>
+        <p class="lead">Ne manquez plus jamais un événement spécial !</p>
+    </header>
+
+    <div class="controls">
+        <div class="d-flex justify-content-center gap-3">
+            <button id="enableAll" class="btn btn-custom">Activer Notifications & Son</button>
+            <button id="testAlert" class="btn btn-secondary">Tester</button>
+        </div>
+        <p class="mobile-info">
+            <strong>Mobile :</strong> Pour le son et les notifications, cliquez sur "Activer" et ajoutez la page à votre écran d'accueil.
+        </p>
+        <div id="status" class="mt-2 fw-bold"></div>
+    </div>
+
+    <section>
+        <h2 class="h4 mb-4">📅 Prochains Anniversaires</h2>
+        <div id="calendar" class="calendar-preview">
+            <!-- Les anniversaires seront insérés ici -->
+        </div>
+    </section>
+</div>
+
+<!-- Bootstrap Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="birthdayToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-primary text-white">
+            <strong class="me-auto">🎉 Anniversaire aujourd'hui !</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+            C'est l'anniversaire de quelqu'un aujourd'hui !
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const calendarEl = document.getElementById('calendar');
+    const statusEl = document.getElementById('status');
+    const enableBtn = document.getElementById('enableAll');
+    const testBtn = document.getElementById('testAlert');
+    const toastEl = document.getElementById('birthdayToast');
+    const toastMessage = document.getElementById('toastMessage');
+    const bsToast = new bootstrap.Toast(toastEl, { delay: 10000 });
+
+    let birthdays = [];
+    let audioContext;
+
+    // Initialisation robuste de l'audio (pour mobile)
+    function initAudio() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+        // Joue un son très court et discret pour débloquer l'audio
+        playBeep(0.01, 1000, 0.05);
+    }
+
+    function playBeep(volume = 0.1, frequency = 587.33, duration = 0.5) {
+        if (!audioContext) return;
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + duration);
+    }
+
+    async function loadBirthdays() {
+        try {
+            const response = await fetch('birthdays.json');
+            birthdays = await response.json();
+            displayBirthdays();
+            checkAndNotify();
+        } catch (error) {
+            console.error(error);
+            statusEl.textContent = "Erreur de chargement.";
+        }
+    }
+
+    function getNextBirthdayDate(birthDateStr) {
+        const today = new Date();
+        const birthDate = new Date(birthDateStr);
+        const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+        if (nextBirthday < today && nextBirthday.toDateString() !== today.toDateString()) {
+            nextBirthday.setFullYear(today.getFullYear() + 1);
+        }
+        return nextBirthday;
+    }
+
+    function calculateAge(birthDateStr) {
+        const birthDate = new Date(birthDateStr);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    function displayBirthdays() {
+        calendarEl.innerHTML = '';
+        const sorted = birthdays.map(p => ({...p, nextDate: getNextBirthdayDate(p.datenaissance)}))
+                                .sort((a, b) => a.nextDate - b.nextDate);
+        const todayStr = new Date().toDateString();
+
+        sorted.forEach(person => {
+            const isToday = person.nextDate.toDateString() === todayStr;
+            const age = calculateAge(person.datenaissance);
+            const card = document.createElement('div');
+            card.className = `birthday-card ${isToday ? 'today' : ''}`;
+            const options = { day: 'numeric', month: 'long' };
+            card.innerHTML = `
+                <h3 class="h5 mb-3">${person.nom} ${isToday ? '🎈' : ''}</h3>
+                <img src="${person.image || 'https://i.pravatar.cc/150'}" class="person-image" alt="${person.nom}">
+                <p class="mb-0 small">Né(e) le ${new Date(person.datenaissance).toLocaleDateString('fr-FR')}</p>
+                <p class="mb-1 fw-bold text-primary">${age} ans</p>
+                <div class="date-badge">${isToday ? "C'est aujourd'hui !" : 'Le ' + person.nextDate.toLocaleDateString('fr-FR', options)}</div>
+            `;
+            calendarEl.appendChild(card);
+        });
+    }
+
+    function checkAndNotify() {
+        const todayStr = new Date().toDateString();
+        const todayBirthdays = birthdays.filter(p => getNextBirthdayDate(p.datenaissance).toDateString() === todayStr);
+
+        if (todayBirthdays.length > 0) {
+            const names = todayBirthdays.map(p => p.nom).join(', ');
+
+            // Notification système si autorisée
+            if (Notification.permission === "granted") {
+                new Notification("Anniversaire !", { body: `Aujourd'hui : ${names}`, icon: todayBirthdays[0].image });
+                playBeep();
+            }
+
+            // Toast Bootstrap une fois par jour
+            const lastShown = localStorage.getItem('lastBirthdayToastDate');
+            if (lastShown !== todayStr) {
+                toastMessage.innerHTML = `N'oubliez pas de souhaiter un joyeux anniversaire à : <strong>${names}</strong> ! 🎂`;
+                bsToast.show();
+                localStorage.setItem('lastBirthdayToastDate', todayStr);
+                playBeep(); // Joue le son avec le toast
+            }
+        }
+    }
+
+    enableBtn.addEventListener('click', () => {
+        initAudio();
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                statusEl.className = "mt-2 text-success fw-bold";
+                statusEl.textContent = "Notifications et Son activés !";
+                checkAndNotify();
+            } else {
+                statusEl.className = "mt-2 text-danger fw-bold";
+                statusEl.textContent = "Notifications bloquées.";
+            }
+        });
+    });
+
+    testBtn.addEventListener('click', () => {
+        initAudio();
+        playBeep();
+        toastMessage.textContent = "Ceci est un test de notification !";
+        bsToast.show();
+        if (Notification.permission === "granted") {
+            new Notification("Test de rappel", { body: "Le système fonctionne !" });
+        }
+    });
+
+    loadBirthdays();
+    setInterval(checkAndNotify, 3600000);
+</script>
+
+</body>
+</html>
