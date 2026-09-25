@@ -8,6 +8,7 @@ class WP_PDF_Registration {
 
     public static function activate() {
         self::register_custom_post_type();
+        WP_PDF_Security::init_secure_directory();
         flush_rewrite_rules();
     }
 
@@ -65,6 +66,7 @@ class WP_PDF_Registration {
 
     public function init() {
         self::register_custom_post_type();
+        WP_PDF_Security::init_secure_directory();
     }
 
     public function enqueue_frontend_assets() {
