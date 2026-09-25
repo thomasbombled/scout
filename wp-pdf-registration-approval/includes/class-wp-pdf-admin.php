@@ -13,7 +13,13 @@ class WP_PDF_Admin {
         add_action('admin_post_pdf_reg_reject', array($this, 'handle_action_reject'));
         add_filter('manage_pdf_registration_posts_columns', array($this, 'set_custom_columns'));
         add_action('manage_pdf_registration_posts_custom_column', array($this, 'render_custom_columns'), 10, 2);
+        add_filter('post_row_actions', array($this, 'add_row_actions'), 10, 2);
+        add_action('admin_notices', array($this, 'render_admin_notices'));
         add_action('admin_init', array($this, 'register_settings'));
+
+        // Bulk Actions support
+        add_filter('bulk_actions-edit-pdf_registration', array($this, 'register_bulk_actions'));
+        add_filter('handle_bulk_actions-edit-pdf_registration', array($this, 'handle_bulk_actions'), 10, 3);
     }
 
     public function add_admin_menu() {
@@ -78,7 +84,7 @@ class WP_PDF_Admin {
                                 'media_buttons' => false
                             ));
                             ?>
-                            <p class="description">Balises disponibles : <code>{first_name}</code>, <code>{last_name}</code>, <code>{company}</code>, <code>{email}</code></p>
+                            <p class="description">Balises disponibles : <code>{first_name}</code>, <code>{last_name}</code>, <code>{company}</code>, <code>{email}</code>, <code>{download_link}</code></p>
                         </td>
                     </tr>
                 </table>
@@ -187,10 +193,11 @@ class WP_PDF_Admin {
 
             if ($sent) {
                 update_post_meta($post_id, '_pdf_reg_status', 'approved');
-                wp_redirect(admin_url('post.php?post=' . $post_id . '&action=edit&message=pdf_sent'));
+                $redirect = add_query_arg('pdf_msg', 'approved', admin_url('edit.php?post_type=pdf_registration'));
             } else {
-                wp_redirect(admin_url('post.php?post=' . $post_id . '&action=edit&message=pdf_error'));
+                $redirect = add_query_arg('pdf_msg', 'error', admin_url('edit.php?post_type=pdf_registration'));
             }
+            wp_redirect($redirect);
             exit;
         }
     }
@@ -205,8 +212,82 @@ class WP_PDF_Admin {
 
         if ($post_id) {
             update_post_meta($post_id, '_pdf_reg_status', 'rejected');
-            wp_redirect(admin_url('post.php?post=' . $post_id . '&action=edit&message=pdf_rejected'));
+            $redirect = add_query_arg('pdf_msg', 'rejected', admin_url('edit.php?post_type=pdf_registration'));
+            wp_redirect($redirect);
             exit;
+        }
+    }
+
+    public function add_row_actions($actions, $post) {
+        if ($post->post_type === 'pdf_registration') {
+            $status = get_post_meta($post->ID, '_pdf_reg_status', true);
+
+            if ($status !== 'approved') {
+                $approve_url = wp_nonce_url(
+                    admin_url('admin-post.php?action=pdf_reg_approve&post_id=' . $post->ID),
+                    'pdf_reg_approve_' . $post->ID
+                );
+                $actions['approve'] = '<a href="' . esc_url($approve_url) . '" style="color:#16a34a; font-weight:bold;">Valider & Envoyer Mail</a>';
+            }
+
+            if ($status !== 'rejected') {
+                $reject_url = wp_nonce_url(
+                    admin_url('admin-post.php?action=pdf_reg_reject&post_id=' . $post->ID),
+                    'pdf_reg_reject_' . $post->ID
+                );
+                $actions['reject'] = '<a href="' . esc_url($reject_url) . '" style="color:#dc2626;">Rejeter</a>';
+            }
+        }
+        return $actions;
+    }
+
+    public function register_bulk_actions($bulk_actions) {
+        $bulk_actions['pdf_bulk_approve'] = 'Valider et envoyer le PDF';
+        $bulk_actions['pdf_bulk_reject'] = 'Rejeter les demandes';
+        return $bulk_actions;
+    }
+
+    public function handle_bulk_actions($redirect_to, $action, $post_ids) {
+        if ($action === 'pdf_bulk_approve') {
+            $approved_count = 0;
+            $mailer = new WP_PDF_Mailer();
+
+            foreach ($post_ids as $post_id) {
+                if ($mailer->send_approval_email($post_id)) {
+                    update_post_meta($post_id, '_pdf_reg_status', 'approved');
+                    $approved_count++;
+                }
+            }
+            $redirect_to = add_query_arg('pdf_bulk_approved_count', $approved_count, $redirect_to);
+        } elseif ($action === 'pdf_bulk_reject') {
+            foreach ($post_ids as $post_id) {
+                update_post_meta($post_id, '_pdf_reg_status', 'rejected');
+            }
+            $redirect_to = add_query_arg('pdf_bulk_rejected_count', count($post_ids), $redirect_to);
+        }
+        return $redirect_to;
+    }
+
+    public function render_admin_notices() {
+        if (isset($_GET['pdf_msg'])) {
+            $msg = sanitize_text_field($_GET['pdf_msg']);
+            if ($msg === 'approved') {
+                echo '<div class="notice notice-success is-dismissible"><p><strong>Inscription validée !</strong> L\'e-mail avec le document PDF a été transmis au destinataire avec succès.</p></div>';
+            } elseif ($msg === 'rejected') {
+                echo '<div class="notice notice-warning is-dismissible"><p>L\'inscription a été marquée comme rejetée.</p></div>';
+            } elseif ($msg === 'error') {
+                echo '<div class="notice notice-error is-dismissible"><p><strong>Erreur :</strong> Impossible d\'envoyer l\'email avec le PDF. Veuillez vérifier la configuration de messagerie WordPress.</p></div>';
+            }
+        }
+
+        if (isset($_GET['pdf_bulk_approved_count'])) {
+            $count = intval($_GET['pdf_bulk_approved_count']);
+            echo '<div class="notice notice-success is-dismissible"><p><strong>' . $count . ' inscription(s) validée(s) !</strong> Les e-mails contenant le PDF ont été envoyés.</p></div>';
+        }
+
+        if (isset($_GET['pdf_bulk_rejected_count'])) {
+            $count = intval($_GET['pdf_bulk_rejected_count']);
+            echo '<div class="notice notice-warning is-dismissible"><p>' . $count . ' inscription(s) rejetée(s).</p></div>';
         }
     }
 
@@ -235,7 +316,7 @@ class WP_PDF_Admin {
             case 'status':
                 $status = get_post_meta($post_id, '_pdf_reg_status', true);
                 if ($status === 'approved') {
-                    echo '<span style="background:#dcfce7; color:#15803d; padding:3px 8px; border-radius:4px; font-weight:600;">Validée</span>';
+                    echo '<span style="background:#dcfce7; color:#15803d; padding:3px 8px; border-radius:4px; font-weight:600;">Validée & Email Envoyé</span>';
                 } elseif ($status === 'rejected') {
                     echo '<span style="background:#fee2e2; color:#b91c1c; padding:3px 8px; border-radius:4px; font-weight:600;">Rejetée</span>';
                 } else {
