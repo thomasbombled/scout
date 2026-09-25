@@ -53,12 +53,12 @@ class WP_PDF_Form_Handler {
 
                     <div class="wp-pdf-reg-field-group">
                         <label for="wp_pdf_first_name">Prénom <span class="required">*</span></label>
-                        <input type="text" id="wp_pdf_first_name" name="first_name" class="wp-pdf-reg-input" placeholder="Votre prénom" required />
+                        <input type="text" id="wp_pdf_first_name" name="first_name" class="wp-pdf-reg-input" placeholder="Votre prénom" required maxlength="50" />
                     </div>
 
                     <div class="wp-pdf-reg-field-group">
                         <label for="wp_pdf_last_name">Nom <span class="required">*</span></label>
-                        <input type="text" id="wp_pdf_last_name" name="last_name" class="wp-pdf-reg-input" placeholder="Votre nom" required />
+                        <input type="text" id="wp_pdf_last_name" name="last_name" class="wp-pdf-reg-input" placeholder="Votre nom" required maxlength="50" />
                     </div>
 
                     <div class="wp-pdf-reg-field-group">
@@ -68,7 +68,7 @@ class WP_PDF_Form_Handler {
 
                     <div class="wp-pdf-reg-field-group">
                         <label for="wp_pdf_company">Société / Organisation (optionnel)</label>
-                        <input type="text" id="wp_pdf_company" name="company" class="wp-pdf-reg-input" placeholder="Nom de votre entreprise" />
+                        <input type="text" id="wp_pdf_company" name="company" class="wp-pdf-reg-input" placeholder="Nom de votre entreprise" maxlength="100" />
                     </div>
 
                     <div class="wp-pdf-reg-field-group wp-pdf-reg-submit-group">
@@ -108,8 +108,21 @@ class WP_PDF_Form_Handler {
         $email      = isset($_POST['email'])      ? sanitize_email($_POST['email'])          : '';
         $company    = isset($_POST['company'])    ? sanitize_text_field($_POST['company'])    : '';
 
-        if (empty($first_name) || empty($last_name) || empty($email) || !is_email($email)) {
-            wp_send_json_error(array('message' => 'Veuillez remplir correctement tous les champs obligatoires.'));
+        // Strict Server-Side Controls & Validations
+        if (empty($first_name) || mb_strlen($first_name) < 2 || mb_strlen($first_name) > 50) {
+            wp_send_json_error(array('message' => 'Le prénom est obligatoire et doit contenir entre 2 et 50 caractères.'));
+        }
+
+        if (empty($last_name) || mb_strlen($last_name) < 2 || mb_strlen($last_name) > 50) {
+            wp_send_json_error(array('message' => 'Le nom est obligatoire et doit contenir entre 2 et 50 caractères.'));
+        }
+
+        if (empty($email) || !is_email($email)) {
+            wp_send_json_error(array('message' => 'L\'adresse e-mail fournie est invalide.'));
+        }
+
+        if (!empty($company) && mb_strlen($company) > 100) {
+            wp_send_json_error(array('message' => 'Le nom de l\'entreprise ne doit pas dépasser 100 caractères.'));
         }
 
         // Create PDF Registration submission entry

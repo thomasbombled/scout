@@ -37,6 +37,7 @@
 
 .wp-pdf-reg-field-group {
     margin-bottom: 20px;
+    position: relative;
 }
 
 .wp-pdf-reg-field-group label {
@@ -68,6 +69,20 @@
     border-color: #3182ce;
     background-color: #ffffff;
     box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+}
+
+.wp-pdf-reg-input.is-invalid {
+    border-color: #e53e3e !important;
+    background-color: #fff5f5 !important;
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15) !important;
+}
+
+.wp-pdf-field-error {
+    color: #e53e3e;
+    font-size: 13px;
+    margin-top: 6px;
+    display: none;
+    font-weight: 500;
 }
 
 .wp-pdf-reg-submit-group {
