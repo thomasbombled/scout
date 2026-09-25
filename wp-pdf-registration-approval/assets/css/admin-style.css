@@ -1,0 +1,8 @@
+/* Admin Styles for Registration Approval Plugin */
+.post-type-pdf_registration .wp-list-table .column-status {
+    width: 140px;
+}
+
+.post-type-pdf_registration .wp-list-table .column-company {
+    width: 180px;
+}

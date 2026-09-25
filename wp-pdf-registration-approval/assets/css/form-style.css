@@ -1,0 +1,124 @@
+/* Form Styles - Elegant & Divi 4 Compatible */
+.wp-pdf-reg-container {
+    max-width: 600px;
+    margin: 30px auto;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.wp-pdf-reg-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 35px 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wp-pdf-reg-card:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.wp-pdf-reg-title {
+    margin: 0 0 10px 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.wp-pdf-reg-subtitle {
+    margin: 0 0 25px 0;
+    font-size: 15px;
+    color: #7f8c8d;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.wp-pdf-reg-field-group {
+    margin-bottom: 20px;
+}
+
+.wp-pdf-reg-field-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #34495e;
+}
+
+.wp-pdf-reg-field-group label .required {
+    color: #e74c3c;
+}
+
+.wp-pdf-reg-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #2d3748;
+    background-color: #f8fafc;
+    transition: all 0.25s ease-in-out;
+    box-sizing: border-box;
+}
+
+.wp-pdf-reg-input:focus {
+    outline: none;
+    border-color: #3182ce;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+}
+
+.wp-pdf-reg-submit-group {
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* Compatible button styling with fallback for non-Divi themes */
+.wp-pdf-reg-submit-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #2b6cb0 0%, #2c5282 100%);
+    color: #ffffff !important;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(44, 82, 130, 0.3);
+    text-decoration: none;
+}
+
+.wp-pdf-reg-submit-btn:hover {
+    background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
+    box-shadow: 0 6px 18px rgba(44, 82, 130, 0.4);
+    transform: translateY(-1px);
+}
+
+.wp-pdf-reg-alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.wp-pdf-reg-alert-success {
+    background-color: #f0fff4;
+    color: #276749;
+    border: 1px solid #c6f6d5;
+}
+
+.wp-pdf-reg-alert-error {
+    background-color: #fff5f5;
+    color: #9b2c2c;
+    border: 1px solid #fed7d7;
+}
+
+/* Divi Specific Overrides & Harmony */
+.et_pb_module .wp-pdf-reg-input {
+    min-height: 44px;
+}
