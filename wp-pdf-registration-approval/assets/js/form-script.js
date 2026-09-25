@@ -11,7 +11,6 @@ jQuery(document).ready(function ($) {
     }
 
     function validateName(name) {
-        // Accepts letters, spaces, hyphens and apostrophes (min 2 chars)
         var re = /^[a-zA-ZÀ-ÿ\s'-]{2,50}$/;
         return re.test(String(name).trim());
     }
@@ -99,6 +98,7 @@ jQuery(document).ready(function ($) {
             last_name: $('#wp_pdf_last_name').val().trim(),
             email: $('#wp_pdf_email').val().trim(),
             company: $('#wp_pdf_company').val().trim(),
+            document_id: $('#wp_pdf_document_id').val(),
             wp_pdf_website_hp: $('#wp_pdf_website_hp').val()
         };
 

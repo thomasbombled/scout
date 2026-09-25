@@ -9,6 +9,7 @@ class WP_PDF_Admin {
     public function init() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
+        add_action('save_post_pdf_registration', array($this, 'save_post_meta'));
         add_action('admin_post_pdf_reg_approve', array($this, 'handle_action_approve'));
         add_action('admin_post_pdf_reg_reject', array($this, 'handle_action_reject'));
         add_filter('manage_pdf_registration_posts_columns', array($this, 'set_custom_columns'));
@@ -52,7 +53,7 @@ class WP_PDF_Admin {
 
         ?>
         <div class="wrap">
-            <h1>Réglages Inscription & Validation PDF</h1>
+            <h1>Réglages Inscription & Validation PDF (Par Défaut)</h1>
             <form method="post" action="options.php">
                 <?php
                 settings_fields('wp_pdf_reg_settings_group');
@@ -60,12 +61,12 @@ class WP_PDF_Admin {
                 ?>
                 <table class="form-table">
                     <tr valign="top">
-                        <th scope="row">Document PDF à joindre :</th>
+                        <th scope="row">Document PDF par défaut :</th>
                         <td>
                             <input type="hidden" name="wp_pdf_reg_document_id" id="wp_pdf_reg_document_id" value="<?php echo esc_attr($document_id); ?>" />
                             <input type="text" id="wp_pdf_reg_document_url" class="regular-text" value="<?php echo esc_attr($document_url); ?>" readonly />
                             <button type="button" class="button button-secondary" id="wp_pdf_reg_upload_btn">Sélectionner / Téleverser un PDF</button>
-                            <p class="description">Ce document PDF sera joint à l'email de confirmation lors de la validation de l'inscription.</p>
+                            <p class="description">Ce PDF sera utilisé si aucun PDF spécifique n'est défini sur le formulaire ou l'inscription.</p>
                         </td>
                     </tr>
                     <tr valign="top">
@@ -97,7 +98,7 @@ class WP_PDF_Admin {
             $('#wp_pdf_reg_upload_btn').click(function(e) {
                 e.preventDefault();
                 var mediaUploader = wp.media({
-                    title: 'Choisir le document PDF',
+                    title: 'Choisir le document PDF par défaut',
                     button: { text: 'Utiliser ce fichier' },
                     multiple: false,
                     library: { type: 'application/pdf' }
@@ -128,12 +129,21 @@ class WP_PDF_Admin {
     }
 
     public function render_meta_box_details($post) {
-        $first_name = get_post_meta($post->ID, '_pdf_reg_first_name', true);
-        $last_name  = get_post_meta($post->ID, '_pdf_reg_last_name', true);
-        $email      = get_post_meta($post->ID, '_pdf_reg_email', true);
-        $company    = get_post_meta($post->ID, '_pdf_reg_company', true);
-        $status     = get_post_meta($post->ID, '_pdf_reg_status', true);
-        $date       = get_post_meta($post->ID, '_pdf_reg_date', true);
+        wp_nonce_field('wp_pdf_reg_save_meta', 'wp_pdf_reg_meta_nonce');
+
+        $first_name  = get_post_meta($post->ID, '_pdf_reg_first_name', true);
+        $last_name   = get_post_meta($post->ID, '_pdf_reg_last_name', true);
+        $email       = get_post_meta($post->ID, '_pdf_reg_email', true);
+        $company     = get_post_meta($post->ID, '_pdf_reg_company', true);
+        $status      = get_post_meta($post->ID, '_pdf_reg_status', true);
+        $date        = get_post_meta($post->ID, '_pdf_reg_date', true);
+        $document_id = get_post_meta($post->ID, '_pdf_reg_document_id', true);
+
+        if (!$document_id) {
+            $document_id = get_option('wp_pdf_reg_document_id', '');
+        }
+
+        $document_url = $document_id ? wp_get_attachment_url($document_id) : '';
 
         if (!$status) {
             $status = 'pending';
@@ -166,6 +176,13 @@ class WP_PDF_Admin {
 
             <hr style="margin: 20px 0;" />
 
+            <div style="margin-bottom:20px;">
+                <label for="pdf_reg_doc_url"><strong>Document PDF spécifique associé :</strong></label><br />
+                <input type="hidden" name="pdf_reg_document_id" id="pdf_reg_document_id" value="<?php echo esc_attr($document_id); ?>" />
+                <input type="text" id="pdf_reg_document_url" class="regular-text" value="<?php echo esc_attr($document_url); ?>" readonly style="margin-top:5px;" />
+                <button type="button" class="button button-secondary" id="wp_pdf_reg_meta_upload_btn" style="margin-top:5px;">Changer le PDF pour cette inscription</button>
+            </div>
+
             <div style="display:flex; gap:10px;">
                 <?php if ($status !== 'approved'): ?>
                     <a href="<?php echo esc_url($approve_url); ?>" class="button button-primary button-large">Valider & Envoyer le PDF</a>
@@ -176,7 +193,47 @@ class WP_PDF_Admin {
                 <?php endif; ?>
             </div>
         </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            $('#wp_pdf_reg_meta_upload_btn').click(function(e) {
+                e.preventDefault();
+                var mediaUploader = wp.media({
+                    title: 'Changer le PDF pour cette inscription',
+                    button: { text: 'Utiliser ce fichier' },
+                    multiple: false,
+                    library: { type: 'application/pdf' }
+                });
+
+                mediaUploader.on('select', function() {
+                    var attachment = mediaUploader.state().get('selection').first().toJSON();
+                    $('#pdf_reg_document_id').val(attachment.id);
+                    $('#pdf_reg_document_url').val(attachment.url);
+                });
+
+                mediaUploader.open();
+            });
+        });
+        </script>
         <?php
+    }
+
+    public function save_post_meta($post_id) {
+        if (!isset($_POST['wp_pdf_reg_meta_nonce']) || !wp_verify_nonce($_POST['wp_pdf_reg_meta_nonce'], 'wp_pdf_reg_save_meta')) {
+            return;
+        }
+
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        if (isset($_POST['pdf_reg_document_id'])) {
+            update_post_meta($post_id, '_pdf_reg_document_id', intval($_POST['pdf_reg_document_id']));
+        }
     }
 
     public function handle_action_approve() {
@@ -297,6 +354,7 @@ class WP_PDF_Admin {
             'title' => 'Demandeur',
             'email' => 'Email',
             'company' => 'Société',
+            'document' => 'PDF Associé',
             'status' => 'Statut',
             'date' => 'Date'
         );
@@ -312,6 +370,18 @@ class WP_PDF_Admin {
             case 'company':
                 $company = get_post_meta($post_id, '_pdf_reg_company', true);
                 echo esc_html($company ? $company : '-');
+                break;
+            case 'document':
+                $doc_id = get_post_meta($post_id, '_pdf_reg_document_id', true);
+                if (!$doc_id) {
+                    $doc_id = get_option('wp_pdf_reg_document_id', '');
+                }
+                if ($doc_id) {
+                    $file_url = wp_get_attachment_url($doc_id);
+                    echo '<a href="' . esc_url($file_url) . '" target="_blank" style="text-decoration:none;">📄 ' . esc_html(basename(get_attached_file($doc_id))) . '</a>';
+                } else {
+                    echo '<span style="color:#94a3b8;">Aucun PDF</span>';
+                }
                 break;
             case 'status':
                 $status = get_post_meta($post_id, '_pdf_reg_status', true);

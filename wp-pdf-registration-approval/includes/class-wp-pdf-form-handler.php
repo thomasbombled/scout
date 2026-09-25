@@ -51,10 +51,12 @@ class WP_PDF_Form_Handler {
     public function render_gutenberg_block($attributes) {
         $title = isset($attributes['title']) ? $attributes['title'] : 'Formulaire d\'inscription';
         $subtitle = isset($attributes['subtitle']) ? $attributes['subtitle'] : 'Inscrivez-vous pour recevoir votre document PDF après validation.';
+        $document_id = isset($attributes['document_id']) ? intval($attributes['document_id']) : 0;
 
         return $this->render_shortcode(array(
-            'title' => $title,
-            'subtitle' => $subtitle
+            'title'       => $title,
+            'subtitle'    => $subtitle,
+            'document_id' => $document_id
         ));
     }
 
@@ -66,8 +68,9 @@ class WP_PDF_Form_Handler {
 
     public function render_shortcode($atts) {
         $atts = shortcode_atts(array(
-            'title' => 'Formulaire d\'inscription',
-            'subtitle' => 'Inscrivez-vous pour recevoir votre document PDF après validation.'
+            'title'       => 'Formulaire d\'inscription',
+            'subtitle'    => 'Inscrivez-vous pour recevoir votre document PDF après validation.',
+            'document_id' => 0
         ), $atts, 'pdf_registration_form');
 
         ob_start();
@@ -85,6 +88,9 @@ class WP_PDF_Form_Handler {
 
                 <form id="wp-pdf-reg-form" class="wp-pdf-reg-form" method="post" action="">
                     <?php wp_nonce_field('wp_pdf_reg_nonce', 'wp_pdf_reg_nonce_field'); ?>
+
+                    <!-- Form-specific Document ID -->
+                    <input type="hidden" name="wp_pdf_document_id" id="wp_pdf_document_id" value="<?php echo esc_attr($atts['document_id']); ?>" />
 
                     <!-- Honeypot anti-spam field -->
                     <div style="display:none;" aria-hidden="true">
@@ -143,10 +149,11 @@ class WP_PDF_Form_Handler {
 
         set_transient($transient_key, ($attempts ? $attempts + 1 : 1), 600);
 
-        $first_name = isset($_POST['first_name']) ? sanitize_text_field($_POST['first_name']) : '';
-        $last_name  = isset($_POST['last_name'])  ? sanitize_text_field($_POST['last_name'])  : '';
-        $email      = isset($_POST['email'])      ? sanitize_email($_POST['email'])          : '';
-        $company    = isset($_POST['company'])    ? sanitize_text_field($_POST['company'])    : '';
+        $first_name  = isset($_POST['first_name'])  ? sanitize_text_field($_POST['first_name'])   : '';
+        $last_name   = isset($_POST['last_name'])   ? sanitize_text_field($_POST['last_name'])    : '';
+        $email       = isset($_POST['email'])       ? sanitize_email($_POST['email'])           : '';
+        $company     = isset($_POST['company'])     ? sanitize_text_field($_POST['company'])     : '';
+        $document_id = isset($_POST['document_id']) ? intval($_POST['document_id'])             : 0;
 
         // Strict Server-Side Controls & Validations
         if (empty($first_name) || mb_strlen($first_name) < 2 || mb_strlen($first_name) > 50) {
@@ -184,6 +191,7 @@ class WP_PDF_Form_Handler {
         update_post_meta($post_id, '_pdf_reg_last_name', $last_name);
         update_post_meta($post_id, '_pdf_reg_email', $email);
         update_post_meta($post_id, '_pdf_reg_company', $company);
+        update_post_meta($post_id, '_pdf_reg_document_id', $document_id);
         update_post_meta($post_id, '_pdf_reg_status', 'pending'); // pending, approved, rejected
         update_post_meta($post_id, '_pdf_reg_date', current_time('mysql'));
         update_post_meta($post_id, '_pdf_reg_access_token', $token);
@@ -212,7 +220,12 @@ class WP_PDF_Form_Handler {
                 wp_die('Cette demande n\'a pas encore été validée par un administrateur.', 'Accès Refusé', array('response' => 403));
             }
 
-            $document_id = get_option('wp_pdf_reg_document_id', '');
+            // Retrieve form-specific document ID or fall back to global document ID
+            $document_id = get_post_meta($post_id, '_pdf_reg_document_id', true);
+            if (!$document_id) {
+                $document_id = get_option('wp_pdf_reg_document_id', '');
+            }
+
             if (!$document_id) {
                 wp_die('Aucun document associé.', 'Fichier Non Trouvé', array('response' => 404));
             }

@@ -4,6 +4,8 @@
     var InspectorControls = wp.blockEditor ? wp.blockEditor.InspectorControls : wp.editor.InspectorControls;
     var PanelBody = wp.components.PanelBody;
     var TextControl = wp.components.TextControl;
+    var MediaUpload = wp.blockEditor ? wp.blockEditor.MediaUpload : wp.editor.MediaUpload;
+    var Button = wp.components.Button;
 
     registerBlockType('wp-pdf-registration/form-block', {
         title: 'Formulaire d\'Inscription PDF',
@@ -19,6 +21,10 @@
             subtitle: {
                 type: 'string',
                 default: 'Inscrivez-vous pour recevoir votre document PDF après validation.'
+            },
+            document_id: {
+                type: 'number',
+                default: 0
             }
         },
 
@@ -31,6 +37,16 @@
 
             function onChangeSubtitle(newSubtitle) {
                 props.setAttributes({ subtitle: newSubtitle });
+            }
+
+            function onSelectMedia(media) {
+                if (media && media.id) {
+                    props.setAttributes({ document_id: media.id });
+                }
+            }
+
+            function onRemoveMedia() {
+                props.setAttributes({ document_id: 0 });
             }
 
             return [
@@ -49,7 +65,38 @@
                             label: 'Sous-titre',
                             value: attributes.subtitle,
                             onChange: onChangeSubtitle
-                        })
+                        }),
+                        el(
+                            'div',
+                            { style: { marginTop: '15px', marginBottom: '15px' } },
+                            el('label', { style: { display: 'block', fontWeight: 'bold', marginBottom: '5px' } }, 'Document PDF spécifique :'),
+                            el(MediaUpload, {
+                                onSelect: onSelectMedia,
+                                type: 'application/pdf',
+                                value: attributes.document_id,
+                                render: function (obj) {
+                                    return el(
+                                        Button,
+                                        {
+                                            isPrimary: true,
+                                            onClick: obj.open
+                                        },
+                                        attributes.document_id ? 'Changer le PDF (ID: ' + attributes.document_id + ')' : 'Choisir un PDF spécifique'
+                                    );
+                                }
+                            }),
+                            attributes.document_id ? el(
+                                Button,
+                                {
+                                    isDefault: true,
+                                    isDestructive: true,
+                                    onClick: onRemoveMedia,
+                                    style: { marginLeft: '10px' }
+                                },
+                                'Utiliser le PDF global'
+                            ) : null,
+                            el('p', { className: 'description', style: { fontSize: '12px', color: '#666', marginTop: '5px' } }, 'Si aucun PDF spécifique n\'est sélectionné, le PDF par défaut configuré dans Réglages PDF sera envoyé.')
+                        )
                     )
                 ),
                 el(
@@ -60,6 +107,7 @@
                         { className: 'wp-pdf-reg-card' },
                         el('h2', { className: 'wp-pdf-reg-title' }, attributes.title || 'Formulaire d\'inscription'),
                         el('p', { className: 'wp-pdf-reg-subtitle' }, attributes.subtitle || ''),
+                        attributes.document_id ? el('p', { style: { fontSize: '12px', color: '#2b6cb0', textAlign: 'center', fontWeight: 'bold' } }, '📄 Document PDF spécifique associé ID: ' + attributes.document_id) : null,
                         el(
                             'div',
                             { className: 'wp-pdf-reg-form' },
@@ -99,7 +147,6 @@
         },
 
         save: function () {
-            // Dynamic block rendered via PHP render_callback
             return null;
         }
     });
