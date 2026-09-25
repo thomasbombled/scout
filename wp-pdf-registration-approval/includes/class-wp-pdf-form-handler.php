@@ -14,8 +14,48 @@ class WP_PDF_Form_Handler {
         // Secure PDF download endpoint for verified tokens
         add_action('init', array($this, 'handle_secure_download'));
 
+        // Register Gutenberg Block
+        add_action('init', array($this, 'register_gutenberg_block'));
+
         // Divi 4 Integration / Shortcode registration compatibility check
         add_action('et_builder_ready', array($this, 'register_divi_compatibility'));
+    }
+
+    public function register_gutenberg_block() {
+        if (!function_exists('register_block_type')) {
+            return;
+        }
+
+        wp_register_script(
+            'wp-pdf-reg-block-js',
+            WP_PDF_REG_URL . 'assets/js/block.js',
+            array('wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-block-editor'),
+            WP_PDF_REG_VERSION
+        );
+
+        wp_register_style(
+            'wp-pdf-reg-block-css',
+            WP_PDF_REG_URL . 'assets/css/form-style.css',
+            array(),
+            WP_PDF_REG_VERSION
+        );
+
+        register_block_type('wp-pdf-registration/form-block', array(
+            'editor_script'   => 'wp-pdf-reg-block-js',
+            'editor_style'    => 'wp-pdf-reg-block-css',
+            'style'           => 'wp-pdf-reg-style',
+            'render_callback' => array($this, 'render_gutenberg_block')
+        ));
+    }
+
+    public function render_gutenberg_block($attributes) {
+        $title = isset($attributes['title']) ? $attributes['title'] : 'Formulaire d\'inscription';
+        $subtitle = isset($attributes['subtitle']) ? $attributes['subtitle'] : 'Inscrivez-vous pour recevoir votre document PDF après validation.';
+
+        return $this->render_shortcode(array(
+            'title' => $title,
+            'subtitle' => $subtitle
+        ));
     }
 
     public function register_divi_compatibility() {
